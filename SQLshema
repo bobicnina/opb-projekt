@@ -1,0 +1,53 @@
+CREATE TABLE IF NOT EXISTS tovornjak (
+  registrska TEXT PRIMARY KEY,
+  nosilnost INTEGER NOT NULL,
+  datum_rojstva TEXT NOT NULL,
+  ime TEXT NOT NULL,
+  priimek TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS prevoz (
+  id SERIAL PRIMARY KEY,
+  datum DATE NOT NULL,
+  kolicina INTEGER,
+  cena_tone INTEGER,
+  zacetek TEXT,
+  konec TEXT
+);
+
+CREATE TABLE IF NOT EXISTS mesecni_stroski (
+  registrska TEXT REFERENCES tovornjak(registrska),
+  mesec TEXT PRIMARY KEY,
+  gorivo INTEGER
+  popravilo INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS cestnina (
+  registrska TEXT REFERENCES tovornjak(registrska),
+  mesec TEXT REFERENCES mesecni_stroski(mesec),
+  italija INTEGER,
+  slovenija INTEGER,
+  madzarska INTEGER,
+  hrvaska INTEGER,
+  avstrija INTEGER
+);
+
+CREATE VIEW cestnina_na_mesec
+AS SELECT COUNT(italija), COUNT(slovenija), COUNT(madzarska), COUNT(hrvaska), COUNT(avstrija)
+FROM cestnina
+;
+
+CREATE VIEW stroski_na_mesec
+AS SELECT COUNT(gorivo) AS gorivo_na_mesec, SUM(cestnina_na_mesec) AS cestnina_na_mesec
+FROM mesecni_stroski JOIN cestnina_na_mesec;
+--Kako bi naredile, da view mesecni stroski že sešteje vse cestnine?
+
+
+
+
+
+
+
+
+
+
