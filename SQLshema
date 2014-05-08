@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS tovornjak (
   registrska TEXT PRIMARY KEY,
   nosilnost INTEGER NOT NULL,
-  datum_rojstva TEXT NOT NULL,
+  datum_rojstva DATE NOT NULL,
   ime TEXT NOT NULL,
   priimek TEXT NOT NULL
 );
