@@ -6,19 +6,19 @@ CREATE TABLE tovornjak (
   priimek TEXT NOT NULL
 );
 
+CREATE TABLE mesta (
+  id SERIAL PRIMARY KEY,
+  ime TEXT,
+  razdalja INTEGER 
+);
+
 CREATE TABLE prevoz (
   id SERIAL PRIMARY KEY,
   datum DATE NOT NULL,
   kolicina INTEGER,
   cena_tone INTEGER,
-  zacetek TEXT REFERENCES mesta(ime),
-  konec TEXT REFERENCES mesta(ime)
-);
-
-CREATE TABLE mesta (
-  ime TEXT,
-  razdalja INTEGER, 
-  PRIMARY KEY(ime,razdalja)
+  zacetek INTEGER REFERENCES mesta(id),
+  konec INTEGER REFERENCES mesta(id)
 );
 
 CREATE TABLE mesecni_stroski (
@@ -31,7 +31,7 @@ CREATE TABLE mesecni_stroski (
 
 CREATE TABLE cestnina (
   registrska TEXT REFERENCES tovornjak(registrska),
-  mesec TEXT REFERENCES mesecni_stroski(mesec),
+  mesec TEXT NOT NULL,
   italija INTEGER CHECK(italija >= 0) DEFAULT 0,
   slovenija INTEGER CHECK(slovenija >= 0) DEFAULT 0,
   madzarska INTEGER CHECK(madzarska >= 0) DEFAULT 0,
@@ -41,7 +41,8 @@ CREATE TABLE cestnina (
 );
 
 CREATE VIEW cestnina_na_mesec
-AS SELECT SUM(italija), SUM(slovenija), SUM(madzarska), SUM(hrvaska), SUM(avstrija)
+AS SELECT SUM(italija) AS italjanska, SUM(slovenija) AS slovenska, SUM(madzarska) AS madzarska, SUM(hrvaska) AS hrvaska
+, SUM(avstrija) AS avstrijska
 FROM cestnina GROUP BY mesec
 ;
 
