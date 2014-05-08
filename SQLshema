@@ -56,15 +56,16 @@ AS SELECT registrska,
   SUM(slovenija) AS slovenska, 
   SUM(madzarska) AS madzarska, 
   SUM(hrvaska) AS hrvaska,
-  SUM(avstrija) AS avstrijska
-FROM cestnina GROUP BY mesec, registrska; 
+  SUM(avstrija) AS avstrijska,
+  SUM(italija) + SUM(slovenija) + SUM(madzarska) + SUM(hrvaska) + SUM(avstrija) AS skupaj
+  FROM cestnina GROUP BY mesec, registrska; 
 
 CREATE VIEW stroski_na_tovornjak
 AS SELECT 
   SUM(gorivo) AS gorivo_na_mesec,
-  SUM(italjanska, slovenska, madzarska, hrvaska, avstrijska) AS cestnina_na_tovornjak
-  FROM mesecni_stroski JOIN cestnina_na_tovornjak ON mesecni_stroski.registrska = cestnina_na_tovornjak.registrska
-  GROUP BY registrska;
+  SUM(skupaj) AS cestnina_na_mesec
+  FROM mesecni_stroski FULL JOIN cestnina_na_tovornjak ON mesecni_stroski.registrska = cestnina_na_tovornjak.registrska
+  GROUP BY mesecni_stroski.registrska;
 
 
 
