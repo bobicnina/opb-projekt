@@ -11,34 +11,42 @@ CREATE TABLE IF NOT EXISTS prevoz (
   datum DATE NOT NULL,
   kolicina INTEGER,
   cena_tone INTEGER,
-  zacetek TEXT,
-  konec TEXT
+  zacetek TEXT REFERENCES mesta(ime),
+  konec TEXT REFERENCES mesta(ime)
+);
+
+CREATE TABLE IF NOT EXISTS mesta (
+  ime TEXT,
+  razdalja INTEGER, 
+  PRIMARY KEY(ime,razdalja)
 );
 
 CREATE TABLE IF NOT EXISTS mesecni_stroski (
   registrska TEXT REFERENCES tovornjak(registrska),
-  mesec TEXT PRIMARY KEY,
-  gorivo INTEGER
-  popravilo INTEGER
+  mesec TEXT,
+  gorivo INTEGER,
+  popravilo INTEGER,
+  PRIMARY KEY(registrska, mesec)
 );
 
 CREATE TABLE IF NOT EXISTS cestnina (
   registrska TEXT REFERENCES tovornjak(registrska),
   mesec TEXT REFERENCES mesecni_stroski(mesec),
-  italija INTEGER,
-  slovenija INTEGER,
-  madzarska INTEGER,
-  hrvaska INTEGER,
-  avstrija INTEGER
+  italija INTEGER CHECK(italija >= 0) DEFAULT 0,
+  slovenija INTEGER CHECK(slovenija >= 0) DEFAULT 0,
+  madzarska INTEGER CHECK(madzarska >= 0) DEFAULT 0,
+  hrvaska INTEGER CHECK(hrvaska >= 0) DEFAULT 0,
+  avstrija INTEGER CHECK(avstrija >= 0) DEFAULT 0,
+  PRIMARY KEY cestnina(registrska, mesec)
 );
 
 CREATE VIEW cestnina_na_mesec
-AS SELECT COUNT(italija), COUNT(slovenija), COUNT(madzarska), COUNT(hrvaska), COUNT(avstrija)
-FROM cestnina
+AS SELECT SUM(italija), SUM(slovenija), SUM(madzarska), SUM(hrvaska), SUM(avstrija)
+FROM cestnina GROUP BY mesec
 ;
 
 CREATE VIEW stroski_na_mesec
-AS SELECT COUNT(gorivo) AS gorivo_na_mesec, SUM(cestnina_na_mesec) AS cestnina_na_mesec
+AS SELECT SUM(gorivo) AS gorivo_na_mesec, SUM(cestnina_na_mesec) AS cestnina_na_mesec
 FROM mesecni_stroski JOIN cestnina_na_mesec;
 --Kako bi naredile, da view mesecni stroski že sešteje vse cestnine?
 
