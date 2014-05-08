@@ -41,9 +41,13 @@ CREATE TABLE cestnina (
 );
 
 CREATE VIEW cestnina_na_mesec
-AS SELECT SUM(italija) AS italjanska, SUM(slovenija) AS slovenska, SUM(madzarska) AS madzarska, SUM(hrvaska) AS hrvaska
-, SUM(avstrija) AS avstrijska
-FROM cestnina GROUP BY mesec
+AS SELECT 
+  SUM(italija) AS italjanska, 
+  SUM(slovenija) AS slovenska, 
+  SUM(madzarska) AS madzarska, 
+  SUM(hrvaska) AS hrvaska,
+  SUM(avstrija) AS avstrijska
+  FROM cestnina GROUP BY mesec
 ;
 
 CREATE VIEW cestnina_na_tovornjak
@@ -56,10 +60,11 @@ AS SELECT registrska,
 FROM cestnina GROUP BY mesec, registrska; 
 
 CREATE VIEW stroski_na_tovornjak
-AS SELECT SUM(gorivo) AS gorivo_na_mesec, SUM(cestnina_na_tovornjak) AS cestnina_na_tovornjak
-FROM mesecni_stroski NATURAL JOIN cestnina_na_tovornjak USING(registrska)
-GROUP BY registrska;
---Kako bi naredile, da view mesecni stroski že sešteje vse cestnine?
+AS SELECT 
+  SUM(gorivo) AS gorivo_na_mesec,
+  SUM(italjanska, slovenska, madzarska, hrvaska, avstrijska) AS cestnina_na_tovornjak
+  FROM mesecni_stroski JOIN cestnina_na_tovornjak ON mesecni_stroski.registrska = cestnina_na_tovornjak.registrska
+  GROUP BY registrska;
 
 
 
