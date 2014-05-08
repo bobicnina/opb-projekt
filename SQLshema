@@ -47,8 +47,12 @@ FROM cestnina GROUP BY mesec
 ;
 
 CREATE VIEW cestnina_na_tovornjak
-AS SELECT SUM(italija) AS italjanska, SUM(slovenija) AS slovenska, SUM(madzarska) AS madzarska, SUM(hrvaska) AS hrvaska
-, SUM(avstrija) AS avstrijska
+AS SELECT registrska,
+  SUM(italija) AS italjanska, 
+  SUM(slovenija) AS slovenska, 
+  SUM(madzarska) AS madzarska, 
+  SUM(hrvaska) AS hrvaska,
+  SUM(avstrija) AS avstrijska
 FROM cestnina GROUP BY mesec, registrska; 
 
 CREATE VIEW stroski_na_tovornjak
