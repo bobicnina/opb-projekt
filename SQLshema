@@ -37,7 +37,7 @@ CREATE TABLE cestnina (
   madzarska INTEGER CHECK(madzarska >= 0) DEFAULT 0,
   hrvaska INTEGER CHECK(hrvaska >= 0) DEFAULT 0,
   avstrija INTEGER CHECK(avstrija >= 0) DEFAULT 0,
-  PRIMARY KEY cestnina(registrska, mesec)
+  PRIMARY KEY(registrska, mesec)
 );
 
 CREATE VIEW cestnina_na_mesec
