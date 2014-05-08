@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS tovornjak (
+CREATE TABLE tovornjak (
   registrska TEXT PRIMARY KEY,
   nosilnost INTEGER NOT NULL,
   datum_rojstva DATE NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tovornjak (
   priimek TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS prevoz (
+CREATE TABLE prevoz (
   id SERIAL PRIMARY KEY,
   datum DATE NOT NULL,
   kolicina INTEGER,
@@ -15,13 +15,13 @@ CREATE TABLE IF NOT EXISTS prevoz (
   konec TEXT REFERENCES mesta(ime)
 );
 
-CREATE TABLE IF NOT EXISTS mesta (
+CREATE TABLE mesta (
   ime TEXT,
   razdalja INTEGER, 
   PRIMARY KEY(ime,razdalja)
 );
 
-CREATE TABLE IF NOT EXISTS mesecni_stroski (
+CREATE TABLE mesecni_stroski (
   registrska TEXT REFERENCES tovornjak(registrska),
   mesec TEXT,
   gorivo INTEGER,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS mesecni_stroski (
   PRIMARY KEY(registrska, mesec)
 );
 
-CREATE TABLE IF NOT EXISTS cestnina (
+CREATE TABLE cestnina (
   registrska TEXT REFERENCES tovornjak(registrska),
   mesec TEXT REFERENCES mesecni_stroski(mesec),
   italija INTEGER CHECK(italija >= 0) DEFAULT 0,
