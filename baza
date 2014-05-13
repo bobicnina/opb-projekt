@@ -1,62 +1,14 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-### Prenos baze popis v sqlite3
-
 import sqlite3        # Knjižnica za delo z bazo
 import csv            # Knjižnica za delo s CSV datotekami
 import re             # Knjižnica za delo z regularnimi izrazi
 import sys            # Knjižnica za komunikacijo s sistemom
 import urllib.request # Knjižnica za delo s spletom
 
-### Nastavitve
+BAZA = "baza.sqlite3"
 
-# Datoteka, v kateri je baza
-BAZA = "popis.sqlite3"
-
-# URL, na katerem dobimo podatke
-URL = "http://lkrv.fri.uni-lj.si/~janos/opb/popis.csv"
-
-### Program
-
-# NAREDIMO BAZO, ČE JE ŠE NIMAMO
-
-# Naredimo povezavo z bazo. Funkcija sqlite3.connect vrne objekt,
-# ki hrani podatke o povezavi z bazo.
-baza = sqlite3.connect(BAZA)
-
-# Naredimo tabelo kraj, če je še ni
-baza.execute('''CREATE TABLE IF NOT EXISTS obcina (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT
-)''')
-
-# Naredimo tabelo podatki, če je še ni
-baza.execute('''CREATE TABLE IF NOT EXISTS podatki (
-   obcina INTEGER REFERENCES obcina (id),
-   leto INTEGER,
-   polletje INTEGER,
-   spol TEXT,
-   starost INTEGER,
-   stevilo INTEGER,
-   PRIMARY KEY (obcina, leto, polletje, spol, starost)
-)''')
-
-# Pomožna funkcija, ki vrne id občine in jo po potrebi doda v bazo
 def getObcina(x):
-    c = baza.cursor()
-    c.execute("SELECT id FROM obcina WHERE name = ?", [x])
-    r = c.fetchone()
-    #c.fetchone() vrne eno vrstico iz te poizvedbe
-    id = -1
-    if r == None:
-        c.execute("INSERT INTO obcina(name) VALUES (?)", (x,))
-        id = c.lastrowid
-        print("Nova občina %s , id = %s" %(x, id))
-    else:
-        id = r[0]
-    c.close()
-    return id
+    # TODO
+    pass
     
 # Pomožna funkcija za normalizacijo spola
 def getSpol(s):
@@ -67,78 +19,22 @@ def getSpol(s):
             return "Ženske"
     return None
 
-# PREBEREMO PODATKE S SPLETA
-def importData():
-    print("Berem %s ..." % URL)
-    www = urllib.request.urlopen(URL)
-
-    print("Berem podatke v razpredelnico...")
-    raz = csv.reader([v.decode() for v in www])
-
-    leto = [-1]
-    polletje = [-1]
-    starost = [-1]
-    spol = ''
-
-    print("Pišem podatke v bazo...")
-    for i, l in enumerate(raz):
-        # Pripravimo indeksne vrstice za leto, polletje in starost
-        if i == 0:
-            for j in range(1, len(l)):
-                if l[j] == " ":
-                   leto.append(leto[j-1])
-                   polletje.append(polletje[j-1])
-                else:
-                    y, h = l[j].split("H")
-                    leto.append(int(y))
-                    polletje.append(int(h))
-        elif i == 1:
-            for j in range(1, len(l)):
-                starost.append(int(l[j].split(" ")[0]))
-        # Če je vrstica prazna, naslednja določa spol
-        elif l[0] == '':
-            spol = ''
-        elif spol == '':
-            spol = l[0]
-        else:
-            id = getObcina(l[0])
-            for j in range(1, len(l)):
-                baza.execute("REPLACE INTO podatki VALUES (?,?,?,?,?,?)",
-                             (id, leto[j], polletje[j], spol, starost[j], int(l[j])))
+#uvoz iz Excela
+def importData(): 
+    pass
 
     # Obvezno moramo narediti commit, sicer se ne zgodi nič
     baza.commit()
     print("Končano.")
-    
+
+#uvoz s spletnih strani
+def uvozCestnin():
+    pass
+
 # POIZVEDUJEMO ZA PODATKI
 def query(obcina=None, spol=None, minst=None, maxst=None):
     c = baza.cursor()
-    select = "SELECT leto, polletje, SUM(stevilo) FROM podatki "
-    group = "GROUP BY leto, polletje ORDER BY leto, polletje"
-    where = []
-    data = []
-    if obcina != None:
-        select += "JOIN obcina ON podatki.obcina = obcina.id "
-        where.append("name = ?")
-        data.append(obcina)
-    if spol != None:
-        where.append("spol = ?")
-        data.append(getSpol(spol))
-    if minst != None:
-        where.append("starost >= ?")
-        data.append(minst)
-    if maxst != None:
-        where.append("starost <= ?")
-        data.append(maxst)
-    if len(where) == 0:
-        w = ""
-    else:
-        w = "WHERE " + " AND ".join(where)
-    c.execute(select + w + group, data)
-
-    for r in c:
-        print("%d/%d: %7d" %r)
-
+    # TODO
     c.close()
 
 # DODAJAMO PODATKE V BAZO
