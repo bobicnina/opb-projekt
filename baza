@@ -6,19 +6,6 @@ import urllib.request # Knjižnica za delo s spletom
 
 BAZA = "baza.sqlite3"
 
-def getObcina(x):
-    # TODO
-    pass
-    
-# Pomožna funkcija za normalizacijo spola
-def getSpol(s):
-    if type(s) == str:
-        if s[0] == 'm' or s[0] == 'M':
-            return "Moški"
-        elif s[0] == 'ž' or s[0] == 'z' or s[0] == 'Ž' or s[0] == 'Z':
-            return "Ženske"
-    return None
-
 #uvoz iz Excela
 def importData(): 
     pass
