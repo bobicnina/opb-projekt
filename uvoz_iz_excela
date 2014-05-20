@@ -1,0 +1,12 @@
+from xlrd import open_workbook
+
+book = open_workbook('prebivalstvo.xlsx',on_demand=True)
+
+for name in book.sheet_names():
+    sheet = book.sheet_by_name(name)
+    rowIndex = -1
+    i=0
+    for cell in sheet.col(1):
+        if 'Površina' in cell.value:
+            print(sheet.cell(2,i).value)
+        i+=1
