@@ -1,16 +1,29 @@
 from xlrd import *
 
-drago = open_workbook('DR401.xlsx',on_demand=True)
-stran=drago.sheet_by_name('List1')
+drago = open_workbook('DR404.xls',on_demand=True)
+stran_drago=drago.sheet_by_name('List1')
 
-ime=stran.cell_value(1, 9)
-print(ime)
+kilometri = stran_drago.cell_value(2,4)
+print(kilometri)
+
+marjan = open_workbook('MAR404.xls',on_demand=True)
+stran_marjan = marjan.sheet_by_name('List1')
+
+cestnina = stran_marjan.cell_value(2,4)
+print(cestnina)
+
+tine =  open_workbook('TI404.xls',on_demand=True)
+stran_tine = tine.sheet_by_name('List1')
+
+bencin = stran_tine.cell_value(2,4)
+print(bencin)
 
 #for name in book.sheet_names():
-#    sheet = book.sheet_by_name(name)
-#    rowIndex = -1
-#    i=0
-#    for cell in sheet.col(1):
-#        if 'Površina' in cell.value:
-#            print(sheet.cell(2,i).value)
-#        i+=1
+# sheet = book.sheet_by_name(name)
+# rowIndex = -1
+# i=0
+# for cell in sheet.col(1):
+# if 'Površina' in cell.value:
+# print(sheet.cell(2,i).value)
+# i+=1
+
