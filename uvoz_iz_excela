@@ -1,7 +1,7 @@
 from xlrd import *
 
 drago = open_workbook('DR401.xlsx',on_demand=True)
-stran=drago.sheet_by_index(0)
+stran=drago.sheet_by_name('List1')
 
 ime=stran.cell_value(1, 9)
 print(ime)
