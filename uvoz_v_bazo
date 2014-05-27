@@ -10,7 +10,7 @@ import re             # Knjižnica za delo z regularnimi izrazi
 ### Nastavitve
 
 # Datoteka, v kateri je baza
-BAZA = "prevoznistvo.sqlite"
+BAZA = "prevoznistvo.sqlite3"
 
 ### Program
 
@@ -22,6 +22,7 @@ baza = sqlite3.connect(BAZA)
 
 # Naredimo tabelo delnica, če je še ni
 baza.execute('''CREATE TABLE IF NOT EXISTS tovornjak (
+  id SERIAL PRIMARY KEY,
   registrska TEXT PRIMARY KEY,
   nosilnost INTEGER NOT NULL,
   datum_rojstva DATE NOT NULL,
