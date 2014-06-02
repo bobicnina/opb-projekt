@@ -46,4 +46,8 @@ while i<35:
     print(i, mesto2, razdalja2)
     i+=1
 
+ #VNOS PREVOZA
+##    c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec) VALUES (?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2))
+
+
 baza.commit()
