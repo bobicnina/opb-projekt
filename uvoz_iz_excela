@@ -25,6 +25,10 @@ while i<35:
     if mesto2=="LJ" or mesto2=="lj":
         mesto2=="Ljubljana"
 
+    datum=stran_drago.cell_value(i, 2)
+    kolicina=stran_drago.cell_value(i, 7)
+    cena=stran_drago.cell_value(i, 6)
+
     url1="http://maps.googleapis.com/maps/api/distancematrix/json?origins=skocjan&destinations={0}&mode=driving&language=en-EN&sensor=false".format(mesto1)
     f1 = urllib.request.urlopen(url1).read().decode('cp1252')
     result1=json.loads(f1)
