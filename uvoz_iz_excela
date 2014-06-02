@@ -1,29 +1,42 @@
 from xlrd import *
+import sqlite3
+import urllib.request
+import json
+
+baz="prevoznistvo.sqlite3"
+baza=sqlite3.connect(baz)
 
 drago = open_workbook('DR404.xls',on_demand=True)
 stran_drago=drago.sheet_by_name('List1')
 
-kilometri = stran_drago.cell_value(2,4)
-print(kilometri)
+i=4
+while i<35:
+    if len(stran_drago.cell_value(i,1))==0:
+        i+=1
+        break
+    if stran_drago.cell_value(i,1)=="DOPUST":
+        i+=1
+        break
+    mesto1, mesto2 = stran_drago.cell_value(i,1).split(' - ')
+    mesto1.strip()
+    mesto2.strip()
+    if mesto1=="LJ" or mesto1=="lj":
+        mesto1="Ljubljana"
+    if mesto2=="LJ" or mesto2=="lj":
+        mesto2=="Ljubljana"
 
-marjan = open_workbook('MAR404.xls',on_demand=True)
-stran_marjan = marjan.sheet_by_name('List1')
+    url1="http://maps.googleapis.com/maps/api/distancematrix/json?origins=skocjan&destinations={0}&mode=driving&language=en-EN&sensor=false".format(mesto1)
+    f1 = urllib.request.urlopen(url1).read().decode('cp1252')
+    result1=json.loads(f1)
+    razdalja1 = result1['rows'][0]['elements'][0]['distance']['value']
+    #baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto1, razdalja1))
+    print(i, mesto1, razdalja1)
 
-cestnina = stran_marjan.cell_value(2,4)
-print(cestnina)
+    url2="http://maps.googleapis.com/maps/api/distancematrix/json?origins=skocjan&destinations={0}&mode=driving&language=en-EN&sensor=false".format(mesto2)
+    f2 = urllib.request.urlopen(url2).read().decode('iso-8859-1')
+    result2=json.loads(f2)
+    razdalja2 = result2['rows'][0]['elements'][0]['distance']['value']
+    print(i, mesto2, razdalja2)
+    i+=1
 
-tine =  open_workbook('TI404.xls',on_demand=True)
-stran_tine = tine.sheet_by_name('List1')
-
-bencin = stran_tine.cell_value(2,4)
-print(bencin)
-
-#for name in book.sheet_names():
-# sheet = book.sheet_by_name(name)
-# rowIndex = -1
-# i=0
-# for cell in sheet.col(1):
-# if 'Površina' in cell.value:
-# print(sheet.cell(2,i).value)
-# i+=1
-
+baza.commit()
