@@ -1,35 +1,20 @@
-#!/usr/bin/env python3
-
-### Prenos baze NYSE v sqlite3
-
-import sqlite3        # Knjižnica za delo z bazo
-import csv            # Knjižnica za delo s CSV datotekami
-import urllib.request # Knjižnica za delo s spletom
-import re             # Knjižnica za delo z regularnimi izrazi
-
-### Nastavitve
+import sqlite3
+import urllib.request
 
 # Datoteka, v kateri je baza
 BAZA = "prevoznistvo.sqlite3"
-
-### Program
-
-### 1. NAREDIMO BAZO, ČE JE ŠE NIMAMO
 
 # Naredimo povezavo z bazo. Funkcija sqlite3.connect vrne objekt,
 # ki hrani podatke o povezavi z bazo.
 baza = sqlite3.connect(BAZA)
 
-# Naredimo tabelo delnica, če je še ni
 baza.execute('''CREATE TABLE IF NOT EXISTS tovornjak (
-  id SERIAL PRIMARY KEY,
   registrska TEXT PRIMARY KEY,
   nosilnost INTEGER NOT NULL,
   datum_rojstva DATE NOT NULL,
   ime TEXT NOT NULL,
   priimek TEXT NOT NULL)''')
 
-# Naredimo tabelo promet, če je še ni
 baza.execute('''CREATE TABLE IF NOT EXISTS mesta (
   id SERIAL PRIMARY KEY,
   ime TEXT,
@@ -38,6 +23,7 @@ baza.execute('''CREATE TABLE IF NOT EXISTS mesta (
 baza.execute('''CREATE TABLE IF NOT EXISTS prevoz (
   id SERIAL PRIMARY KEY,
   datum DATE NOT NULL,
+  registrska TEXT REFERENCES tovornjak(registrska),
   kolicina INTEGER,
   cena_tone INTEGER,
   zacetek INTEGER REFERENCES mesta(id),
@@ -48,6 +34,7 @@ baza.execute('''CREATE TABLE IF NOT EXISTS mesecni_stroski (
   mesec TEXT,
   gorivo INTEGER,
   popravilo INTEGER,
+  razdalja INTEGER,
   PRIMARY KEY(registrska, mesec))''')
 
 baza.execute('''CREATE TABLE IF NOT EXISTS cestnina (
@@ -86,7 +73,6 @@ AS SELECT
   FROM mesecni_stroski JOIN cestnina_na_tovornjak ON mesecni_stroski.registrska = cestnina_na_tovornjak.registrska
   GROUP BY mesecni_stroski.registrska''')
 
-# Obvezno moramo narediti commit, sicer se ne zgodi nič
 baza.commit()
 
 
@@ -100,4 +86,3 @@ c.execute('''SELECT * FROM tovornjak''')
 a=c.fetchone()
 print(a)
 baza.commit()
-
