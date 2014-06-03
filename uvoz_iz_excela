@@ -27,7 +27,7 @@ while i<35:
 
     kolicina=stran_drago.cell_value(i, 7)
     cena=stran_drago.cell_value(i, 6)
-    
+    kilometri=stran_drago.cell_value(46,5)
     datum=xlrd.xldate_as_tuple(stran_drago.cell_value(i, 2), 0)
     datum=str(datum[2])+"."+str(datum[1])+"."+str(datum[0])
     
