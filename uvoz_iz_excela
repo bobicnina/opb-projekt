@@ -33,7 +33,7 @@ while i<35:
     url1="http://maps.googleapis.com/maps/api/distancematrix/json?" + urllib.parse.urlencode(getdata)
     f1 = urllib.request.urlopen(url1).read().decode("UTF-8")
     result1=json.loads(f1)
-    razdalja1 = result1['rows'][0]['elements'][0]['distance']['value']
+    razdalja1 = int((result1['rows'][0]['elements'][0]['distance']['value'])/1000)
 ## c.execute("""SELECT * FROM mesta WHERE ime=?""", [mesto1])
 ## if c.fetchone() is None:
 ## baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto1, razdalja1))
@@ -44,7 +44,7 @@ while i<35:
     url2="http://maps.googleapis.com/maps/api/distancematrix/json?" + urllib.parse.urlencode(getdata2)
     f2 = urllib.request.urlopen(url2).read().decode('iso-8859-1')
     result2=json.loads(f2)
-    razdalja2 = result2['rows'][0]['elements'][0]['distance']['value']
+    razdalja2 = int((result2['rows'][0]['elements'][0]['distance']['value'])/1000)
 ## c.execute("""SELECT * FROM mesta WHERE ime=?""", [mesto2])
 ## if c.fetchone() is None:
 ## baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto2, razdalja2))
