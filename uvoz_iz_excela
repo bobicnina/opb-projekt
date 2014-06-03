@@ -23,7 +23,7 @@ while i<35:
     if mesto1=="LJ" or mesto1=="lj":
         mesto1="Ljubljana"
     if mesto2=="LJ" or mesto2=="lj":
-        mesto2=="Ljubljana"
+        mesto2="Ljubljana"
 
     datum=stran_drago.cell_value(i, 2)
     kolicina=stran_drago.cell_value(i, 7)
