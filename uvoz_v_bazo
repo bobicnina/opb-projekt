@@ -1,5 +1,4 @@
 import sqlite3
-import urllib.request
 
 # Datoteka, v kateri je baza
 BAZA = "prevoznistvo.sqlite3"
