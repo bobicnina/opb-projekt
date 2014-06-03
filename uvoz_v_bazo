@@ -16,12 +16,12 @@ baza.execute('''CREATE TABLE IF NOT EXISTS tovornjak (
   priimek TEXT NOT NULL)''')
 
 baza.execute('''CREATE TABLE IF NOT EXISTS mesta (
-  id SERIAL PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   ime TEXT,
   razdalja INTEGER)''')
 
 baza.execute('''CREATE TABLE IF NOT EXISTS prevoz (
-  id SERIAL PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   datum DATE NOT NULL,
   registrska TEXT REFERENCES tovornjak(registrska),
   kolicina INTEGER,
