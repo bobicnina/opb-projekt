@@ -25,9 +25,13 @@ while i<35:
     if mesto2=="LJ" or mesto2=="lj":
         mesto2="Ljubljana"
 
-    datum=stran_drago.cell_value(i, 2)
     kolicina=stran_drago.cell_value(i, 7)
     cena=stran_drago.cell_value(i, 6)
+    
+    datum=xlrd.xldate_as_tuple(stran_drago.cell_value(i, 2), 0)
+    datum=str(datum[2])+"."+str(datum[1])+"."+str(datum[0])
+    
+    c=baza.cursor()
 
     getdata = {"origins": "skocjan", "destinations": mesto1, "mode": "driving", "language": "en-EN", "sensor": "false"}
     url1="http://maps.googleapis.com/maps/api/distancematrix/json?" + urllib.parse.urlencode(getdata)
