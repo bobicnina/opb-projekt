@@ -34,10 +34,10 @@ while i<35:
     f1 = urllib.request.urlopen(url1).read().decode("UTF-8")
     result1=json.loads(f1)
     razdalja1 = int((result1['rows'][0]['elements'][0]['distance']['value'])/1000)
-## c.execute("""SELECT * FROM mesta WHERE ime=?""", [mesto1])
-## if c.fetchone() is None:
-## baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto1, razdalja1))
-## else: pass
+    c.execute("""SELECT * FROM mesta WHERE ime=?""", [mesto1])
+    if c.fetchone() is None:
+        baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto1, razdalja1))
+    else: pass
     print(i, mesto1, razdalja1)
 
     getdata2 = {"origins": "skocjan", "destinations": mesto2, "mode": "driving", "language": "en-EN", "sensor": "false"}
@@ -45,15 +45,15 @@ while i<35:
     f2 = urllib.request.urlopen(url2).read().decode('iso-8859-1')
     result2=json.loads(f2)
     razdalja2 = int((result2['rows'][0]['elements'][0]['distance']['value'])/1000)
-## c.execute("""SELECT * FROM mesta WHERE ime=?""", [mesto2])
-## if c.fetchone() is None:
-## baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto2, razdalja2))
-## else: pass
+    c.execute("""SELECT * FROM mesta WHERE ime=?""", [mesto2])
+    if c.fetchone() is None:
+        baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto2, razdalja2))
+    else: pass
     print(i, mesto2, razdalja2)
     i+=1
 
  #VNOS PREVOZA
-## c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec) VALUES (?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2))
+    c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec) VALUES (?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2))
 
 
 baza.commit()
