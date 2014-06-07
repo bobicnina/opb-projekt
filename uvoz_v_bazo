@@ -71,6 +71,11 @@ AS SELECT
   SUM(skupaj) AS cestnina_na_mesec
   FROM mesecni_stroski JOIN cestnina_na_tovornjak ON mesecni_stroski.registrska = cestnina_na_tovornjak.registrska
   GROUP BY mesecni_stroski.registrska''')
+  
+CREATE TABLE IF NOT EXISTS uporabnik (
+  username TEXT PRIMARY KEY,
+  password TEXT NOT NULL,
+);
 
 baza.commit()
 
