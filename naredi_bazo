@@ -73,19 +73,7 @@ AS SELECT
   GROUP BY mesecni_stroski.registrska''')
   
 baza.execute('''CREATE TABLE IF NOT EXISTS uporabnik (
-  username TEXT PRIMARY KEY,
-  password TEXT NOT NULL)''')
+  uporabnik TEXT PRIMARY KEY,
+  geslo TEXT NOT NULL)''')
 
-baza.commit()
-
-
-##INSERT V BAZO
-baz="prevoznistvo.sqlite3"
-
-baza=sqlite3.connect(baz)
-baza.execute('''INSERT INTO tovornjak(registrska, nosilnost, datum_rojstva, ime, priimek) VALUES (?, ?, ?, ?, ?)''', ('123', 12, '21.2.2020', 'Lojze', 'Mejak'))
-c=baza.cursor()
-c.execute('''SELECT * FROM tovornjak''')
-a=c.fetchone()
-print(a)
 baza.commit()
