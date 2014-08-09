@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+	<link rel="stylesheet" href="/static/stil.css">
+
+  </head>
+
+  <body>
+  <div id="telo">
+	<div id="banner">
+	<center><a href="\" style="text-decoration:none;">Avtoprevozništvo Bobič</a></center></br>
+	
+	</div>
+	<center>
+	<p style="margin-top:25px">Izpolnite spodnji obrazec:</p>
+	
+	<div class="prijava">
+      <form class="form-signin" role="form" method="post" action=".">
+        %if napaka:
+        <div class="alert alert-warning">{{napaka}}</div>
+        %end
+
+        <input type="username" class="form-control" placeholder="Uporabniško ime"
+               %if username:
+               value="{{username}}"
+               %end
+               name="username"
+               required autofocus>
+			   </br>
+        <input type="password" class="form-control" placeholder="Geslo" name="password1" required>
+		</br>
+        <input type="password" class="form-control" placeholder="Geslo" name="password2" required>
+		</br>
+        <button class="gumb" type="submit">Registriraj se</button>
+      </form>
+    </div>
+	</center>
+</div>
+  </body>
+</html>

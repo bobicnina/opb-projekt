@@ -1,0 +1,14 @@
+%rebase ('base.html', title='Avtoprevozništvo')
+Vozniki:
+<ul>
+%for ime in imena:
+<li><a href="/pregled/{{ime}}/">{{ime}}</a></li>
+%end
+</ul>
+
+</br></br>
+Mesec:
+<ul>
+<li>April 2014</li>
+<li>Marec 2014</li>
+</ul>

@@ -1,0 +1,36 @@
+div#banner{
+background-color:#F0F0F0;
+border:10px;
+border-color:white;
+font-size:50px;
+height:100px;
+font-style: bold;
+}
+
+div#stolpec{
+position: left;
+width: 200px;
+border-right: solid 1px #969696;
+margin-left: 25px;
+margin-top:25px;
+line-height: 150%;
+}
+
+table#tabela{
+border:0px;
+}
+div#telo{
+font-family:Tahoma;
+color: #969696;
+}
+
+div#drugistolpec{
+margin-left:25px;
+}
+
+a:link, a:active, a:visited{
+color: #969696;
+}
+a:hover{
+color:#656565;
+}
