@@ -207,10 +207,5 @@ def uvoz():
     #return bottle.template("uvoz.html", akcija="done")
     bottle.redirect("/")
 
-@bottle.route("/sprememba/")
-def sprememba():
-    return bottle.template("sprememba.html")
-
-
 bottle.run(host='localhost', port=8080)
 
