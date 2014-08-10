@@ -31,9 +31,9 @@ def uvoz(exc):
         mesto1, mesto2 = stran.cell_value(i,1).split(' - ')
         mesto1.strip()
         mesto2.strip()
-        if mesto1=="LJ" or mesto1=="lj":
+        if mesto1=="LJ" or mesto1=="lj" or mesto1=="ljubljana":
             mesto1="Ljubljana"
-        if mesto2=="LJ" or mesto2=="lj":
+        if mesto2=="LJ" or mesto2=="lj" or mesto2=="ljubljana":
             mesto2="Ljubljana"
 
         kolicina=stran.cell_value(i, 7)
