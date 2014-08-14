@@ -15,9 +15,10 @@ baza = sqlite3.connect(baza_datoteka, isolation_level=None)
 secret="sara"
 
 def uvoz_p(exc):
+    stran=exc.sheet_by_name('List1')
     ime=stran.cell_value(0, 9)
     #c=baza.cursor()
-    #c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', ime)
+    #c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', [ime])
     #registrska=tuple(c)[0][0]
     stran=exc.sheet_by_name('List1')
     i=4
@@ -31,9 +32,9 @@ def uvoz_p(exc):
         mesto1, mesto2 = stran.cell_value(i,1).split(' - ')
         mesto1.strip()
         mesto2.strip()
-        if mesto1=="LJ" or mesto1=="lj" or mesto1=="ljubljana":
+        if mesto1=="LJ" or mesto1=="lj":
             mesto1="Ljubljana"
-        if mesto2=="LJ" or mesto2=="lj" or mesto2=="ljubljana":
+        if mesto2=="LJ" or mesto2=="lj":
             mesto2="Ljubljana"
 
         kolicina=stran.cell_value(i, 7)
@@ -68,36 +69,27 @@ def uvoz_p(exc):
         i+=1
      #VNOS PREVOZA
         c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec, registrska) VALUES (?, ?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2, ime))
-
-
     baza.commit()
 
 
 
 
 
-##def get_user(auto_login = True):
-##    """Poglej cookie in ugotovi, kdo je prijavljeni uporabnik,
-##       vrni njegov username in ime. Če ni prijavljen, presumeri
-##       na stran za prijavo ali vrni None (advisno od auto_login).
-##    """
-##    # Dobimo username iz piškotka
-##    username = bottle.request.get_cookie('username', secret=secret)
-##    # Preverimo, ali ta uporabnik obstaja
-##    if username is not None:
-##        c = baza.cursor()
-##        c.execute("SELECT username, ime FROM uporabnik WHERE username=?",
-##                  [username])
-##        r = c.fetchone()
-##        c.close ()
-##        if r is not None:
-##            # uporabnik obstaja, vrnemo njegove podatke
-##            return r
-##    # Če pridemo do sem, uporabnik ni prijavljen, naredimo redirect
-##    if auto_login:
-##        bottle.redirect('/login/')
-##    else:
-##        return None
+def dobi_uporabnika(auto_login = True):
+    uporabnik = bottle.request.get_cookie('uporabnik', secret=secret)
+    if uporabnik is not None:
+        c = baza.cursor()
+        c.execute("SELECT uporabnik FROM uporabnik WHERE uporabnik=?", [uporabnik])
+        r = c.fetchone()
+        c.close ()
+        if r is not None:
+            # uporabnik obstaja, vrnemo njegove podatke
+            return tuple(r)[0]
+    # Če pridemo do sem, uporabnik ni prijavljen, naredimo redirect
+    if auto_login:
+        bottle.redirect('/prijava/')
+    else:
+        return None
 
 
 def password_md5(s):
@@ -118,35 +110,44 @@ def static(filename):
 @bottle.route("/")
 def main():
     """Glavna stran."""
-    username="Sara"
     # Iz cookieja dobimo uporabnika (ali ga preusmerimo na login, če
     # nima cookija)
-    #(username, ime) = get_user()
+    uporabnik=dobi_uporabnika()
     # Vrnemo predlogo za glavno stran
-    return bottle.template("main.html", username=username)
+    return bottle.template("main.html", uporabnik=uporabnik)
 
 
 @bottle.get("/prijava/")
 def prijava():
     return bottle.template("prijava.html", napaka=None, username=None)
 
+
 @bottle.post("/prijava/")
 def login_post():
-    username = bottle.request.forms.username
+    uporabnik = bottle.request.forms.username
     password = password_md5(bottle.request.forms.password)
     c = baza.cursor()
     c.execute("SELECT 1 FROM uporabnik WHERE uporabnik=? AND geslo=?",
-              [username, password])
+              [uporabnik, password])
     if c.fetchone() is None:
         # Username in geslo se ne ujemata
         return bottle.template("prijava.html",
                                napaka="Nepravilna prijava",
-                               username=username)
+                               uporabnik=uporabnik)
     else:
         # Vse je v redu, nastavimo cookie in preusmerimo na glavno stran
-        #bottle.response.set_cookie('username', username, path='/', secret=secret)
+        bottle.response.set_cookie('uporabnik', uporabnik, path='/', secret=secret)
         bottle.redirect("/")
 
+
+@bottle.get("/odjava/")
+def odjava():
+    bottle.response.delete_cookie('uporabnik')
+    return bottle.template("odjava.html")
+
+@bottle.get("/registracija/")
+def register():
+    return bottle.template("registracija.html", napaka=None, username=None)
 
     
 @bottle.post("/registracija/")
@@ -181,23 +182,32 @@ def register_post():
         bottle.redirect("/")
 
 
-
 @bottle.route("/pregled/")
 def pregled():
     c=baza.cursor()
     c.execute('''SELECT * FROM tovornjak''')
     imen=tuple(c)
-    imena=[]
+    imena={}
     for one in imen:
-        imena.append(one[3]+' '+one[4])
-    c.execute('''SELECT mesec FROM mesecni_stroski LIMIT 2''')
-    print(tuple(c))
+        imena[one[3]]=one[4]
+    b=baza.cursor()
+    b.execute('''SELECT strftime('%m', datum) as MESEC FROM prevoz''')
+    print(tuple(b))
     return bottle.template("pregled.html", imena=imena)
+
+@bottle.route("/pregled/<voznik>/")
+def pregled(voznik):
+    c=baza.cursor()
+    c.execute("SELECT * FROM prevoz WHERE registrska=?", [voznik])
+    c=tuple(c)
+    print(c)
+    return bottle.template("voznik.html", voznik=voznik, podatki=c)
 
 @bottle.get("/uvoz/")
 def uvoz1():
 #prikaži formo za vnos datoteke
     return bottle.template("uvoz.html", akcija=None)
+
 
 @bottle.post("/uvoz/")
 #uploada datoteko
@@ -207,6 +217,7 @@ def uvoz():
     uvoz_p(exc)
     #return bottle.template("uvoz.html", akcija="done")
     bottle.redirect("/")
+
 
 bottle.run(host='localhost', port=8080)
 

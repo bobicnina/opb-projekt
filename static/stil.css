@@ -34,3 +34,8 @@ color: #969696;
 a:hover{
 color:#656565;
 }
+
+table#voznik{
+border-collapse: separate;
+border-spacing: 10px 5px;
+}
