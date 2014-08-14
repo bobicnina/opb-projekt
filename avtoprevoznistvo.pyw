@@ -14,11 +14,11 @@ baza_datoteka="prevoznistvo.sqlite3"
 baza = sqlite3.connect(baza_datoteka, isolation_level=None)
 secret="sara"
 
-def uvoz(exc):
+def uvoz_p(exc):
     ime=stran.cell_value(0, 9)
-    c=baza.cursor()
-    c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', ime)
-    registrska=tuple(c)[0][0]
+    #c=baza.cursor()
+    #c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', ime)
+    #registrska=tuple(c)[0][0]
     stran=exc.sheet_by_name('List1')
     i=4
     while i<35:
@@ -39,7 +39,7 @@ def uvoz(exc):
         kolicina=stran.cell_value(i, 7)
         cena=stran.cell_value(i, 6)
         kilometri=stran.cell_value(46,5)
-        datum=xlrd.xldate_as_tuple(stran.cell_value(i, 2), 0)
+        datum=xldate_as_tuple(stran.cell_value(i, 2), 0)
         datum=str(datum[2])+"."+str(datum[1])+"."+str(datum[0])
         
         c=baza.cursor()
@@ -202,8 +202,9 @@ def uvoz1():
 @bottle.post("/uvoz/")
 #uploada datoteko
 def uvoz():
-    data = bottle.request.files.data
-    exc=open_workbook(data,on_demand=True)
+    data = bottle.request.files.data.file
+    exc=open_workbook(file_contents=data.read())
+    uvoz_p(exc)
     #return bottle.template("uvoz.html", akcija="done")
     bottle.redirect("/")
 
