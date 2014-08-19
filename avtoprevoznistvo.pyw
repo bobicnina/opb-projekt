@@ -208,14 +208,26 @@ def uvoz1():
 #prikaži formo za vnos datoteke
     return bottle.template("uvoz.html", akcija=None)
 
-
+@bottle.post("/uvoz1/")
+def uvoz():
+    ime=bottle.request.forms.ime
+    priimek=bottle.request.forms.priimek
+    datum=bottle.request.forms.datum
+    registrska=bottle.request.forms.registrska
+    nosilnost=bottle.request.forms.nosilnost
+    c=baza.cursor()
+    c.execute('''INSERT INTO tovornjak(registrska, nosilnost,
+               datum_rojstva, ime, priimek) VALUES (?, ?, ?, ?, ?)''',
+              [registrska, nosilnost, datum, ime, priimek])
+    baza.commit()
+    bottle.redirect("/")
+        
 @bottle.post("/uvoz/")
 #uploada datoteko
 def uvoz():
-    data = bottle.request.files.data.file
+    data=bottle.request.files.data.file
     exc=open_workbook(file_contents=data.read())
     uvoz_p(exc)
-    #return bottle.template("uvoz.html", akcija="done")
     bottle.redirect("/")
 
 
