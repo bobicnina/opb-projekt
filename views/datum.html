@@ -1,0 +1,16 @@
+%rebase ('base.html', title='Avtoprevozništvo')
+
+<p style="font-size:35px">{{datum}}</p>
+
+<table id="mesec">
+%for ena in podatki:
+<tr>
+%for i in range(len(ena)):
+<td>
+{{ena[i]}}
+</td>
+%end
+</tr>
+%end
+
+</table>

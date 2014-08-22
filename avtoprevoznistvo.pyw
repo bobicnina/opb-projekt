@@ -17,9 +17,9 @@ secret="sara"
 def uvoz_p(exc):
     stran=exc.sheet_by_name('List1')
     ime=stran.cell_value(0, 9)
-    #c=baza.cursor()
-    #c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', [ime])
-    #registrska=tuple(c)[0][0]
+    c=baza.cursor()
+    c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', [ime])
+    registrska=tuple(c)[0][0]
     stran=exc.sheet_by_name('List1')
     i=4
     while i<35:
@@ -41,7 +41,7 @@ def uvoz_p(exc):
         cena=stran.cell_value(i, 6)
         kilometri=stran.cell_value(46,5)
         datum=xldate_as_tuple(stran.cell_value(i, 2), 0)
-        datum=str(datum[2])+"."+str(datum[1])+"."+str(datum[0])
+        datum=str(datum[0])+"-"+str(datum[1])+"-"+str(datum[2])
         
         c=baza.cursor()
 
@@ -68,7 +68,7 @@ def uvoz_p(exc):
         print(i, mesto2, razdalja2)
         i+=1
      #VNOS PREVOZA
-        c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec, registrska) VALUES (?, ?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2, ime))
+        c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec, registrska) VALUES (?, ?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2, registrska))
     baza.commit()
 
 
@@ -191,17 +191,69 @@ def pregled():
     for one in imen:
         imena[one[3]]=one[4]
     b=baza.cursor()
-    b.execute('''SELECT strftime('%m', datum) as MESEC FROM prevoz''')
-    print(tuple(b))
-    return bottle.template("pregled.html", imena=imena)
+    b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC LIMIT 1;''')
+    datum=str(tuple(b)[0][0]).split("-")
+    leto=datum[0]
+    datum=datum[1]
+    datuma=[]
+    if datum=="1":
+        datuma.append("Januar"+" "+leto)
+        datum2="December"
+        leto2=str(int(leto)-1)
+        datuma.append(datuma2+" "+leto2)
+    elif datum=="2":
+        datuma.append("Februar"+" "+leto)
+        datuma.append("Januar"+" "+leto)
+    elif datum=="3":
+        datuma.append("Marec"+" "+leto)
+        datuma.append("Februar"+" "+leto)
+    elif datum=="4":
+        datuma.append("April"+" "+leto)
+        datuma.append("Marec"+" "+leto)
+    elif datum=="5":
+        datuma.append("Maj"+" "+leto)
+        datuma.append("April"+" "+leto)
+    elif datum=="6":
+        datuma.append("Junij"+" "+leto)
+        datuma.append("Maj"+" "+leto)
+    elif datum=="7":
+        datuma.append("Julij"+" "+leto)
+        datuma.append("Junij"+" "+leto)
+    elif datum=="8":
+        datuma.append("Avgust"+" "+leto)
+        datuma.append("Julij"+" "+leto)
+    elif datum=="9":
+        datuma.append("September"+" "+leto)
+        datuma.append("Avgust"+" "+leto)
+    elif datum=="10":
+        datuma.append("Oktober"+" "+leto)
+        datuma.append("September"+" "+leto)
+    elif datum=="11":
+        datuma.append("November"+" "+leto)
+        datuma.append("Oktober"+" "+leto)
+    elif datum=="12":
+        datuma.append("December"+" "+leto)
+        datuma.append("November"+" "+leto)
+    return bottle.template("pregled.html", imena=imena, datuma=datuma)
 
 @bottle.route("/pregled/<voznik>/")
 def pregled(voznik):
+    b=baza.cursor()
+    b.execute("SELECT registrska FROM tovornjak WHERE ime=?", [voznik])
+    b.fetchone()
+    registrska=tuple(b)[0][0]
     c=baza.cursor()
-    c.execute("SELECT * FROM prevoz WHERE registrska=?", [voznik])
+    c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
     c=tuple(c)
-    print(c)
     return bottle.template("voznik.html", voznik=voznik, podatki=c)
+
+@bottle.route("/pregled/<datum>/")
+def pregled(datum):
+    datuma=datum.split(" ")
+    c=baza.cursor()
+    c.execute("SELECT * FROM mesecni_stroski WHERE mesec=? AND leto=?", [datuma[0], datuma[1]])
+    c=tuple(c)
+    return bottle.template("datum.html", datum=datum, podatki=c)
 
 @bottle.get("/uvoz/")
 def uvoz1():
