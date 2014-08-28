@@ -22,12 +22,12 @@
        %if napaka:
         <div class="alert alert-warning">{{napaka}}</div>
         %end
-        <input type="username" class="form-control" placeholder="Uporabniško ime" 
-		%if username:
+        <input type="uporabnik" class="form-control" placeholder="Uporabniško ime" 
+		%if uporabnik:
         value="{{uporabnik}}"
         %end
-		name="username" required autofocus>
-        <input type="password" class="form-control" placeholder="Geslo" name="password" required>
+		name="uporabnik" required autofocus>
+        <input type="password" class="form-control" placeholder="Geslo" name="geslo" required>
         <button class="gumb" type="submit">Prijava</button>
       </form>
     </div> 

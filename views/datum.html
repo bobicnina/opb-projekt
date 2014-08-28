@@ -1,7 +1,9 @@
 %rebase ('base.html', title='Avtoprevozništvo')
 
 <p style="font-size:35px">{{datum}}</p>
-
+%if napaka:
+ <div class="alert alert-warning">{{napaka}}</div>
+%end
 <table id="mesec">
 %for ena in podatki:
 <tr>

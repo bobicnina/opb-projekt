@@ -26,16 +26,16 @@
         <div class="alert alert-warning">{{napaka}}</div>
         %end
 
-        <input type="username" class="form-control" placeholder="Uporabniško ime"
-               %if username:
-               value="{{username}}"
+        <input type="uporabnik" class="form-control" placeholder="Uporabniško ime"
+               %if uporabnik:
+               value="{{uporabnik}}"
                %end
-               name="username"
+               name="uporabnik"
                required autofocus>
 			   </br>
-        <input type="password" class="form-control" placeholder="Geslo" name="password1" required>
+        <input type="password" class="form-control" placeholder="Geslo" name="geslo1" required>
 		</br>
-        <input type="password" class="form-control" placeholder="Geslo" name="password2" required>
+        <input type="password" class="form-control" placeholder="Geslo" name="geslo2" required>
 		</br>
         <button class="gumb" type="submit">Registriraj se</button>
       </form>

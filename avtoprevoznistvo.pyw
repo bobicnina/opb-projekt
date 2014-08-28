@@ -14,7 +14,12 @@ baza_datoteka="prevoznistvo.sqlite3"
 baza = sqlite3.connect(baza_datoteka, isolation_level=None)
 secret="sara"
 
+
+
+##Pomožne funkcije
+
 def uvoz_p(exc):
+    '''Uvozi podatke iz excela v bazo'''
     stran=exc.sheet_by_name('List1')
     ime=stran.cell_value(0, 9)
     c=baza.cursor()
@@ -37,6 +42,7 @@ def uvoz_p(exc):
         if mesto2=="LJ" or mesto2=="lj":
             mesto2="Ljubljana"
 
+    #Ostali podatki o prevozu
         kolicina=stran.cell_value(i, 7)
         cena=stran.cell_value(i, 6)
         kilometri=stran.cell_value(46,5)
@@ -45,6 +51,8 @@ def uvoz_p(exc):
         
         c=baza.cursor()
 
+    #Na internet pogleda razdaljo od Škocjana do začetka/konca prevoza, če mesta
+    #še ni v bazi, ga vpiše
         getdata = {"origins": "skocjan", "destinations": mesto1, "mode": "driving", "language": "en-EN", "sensor": "false"}
         url1="http://maps.googleapis.com/maps/api/distancematrix/json?" + urllib.parse.urlencode(getdata)
         f1 = urllib.request.urlopen(url1).read().decode("UTF-8")
@@ -72,10 +80,52 @@ def uvoz_p(exc):
     baza.commit()
 
 
-
+def mesec_beseda(mesec, leto):
+    #napiše ime meseca in leto ter še enega pred njim
+    datuma=[]
+    if mesec=="1":
+        datuma.append("Januar"+" "+leto)
+        datum2="December"
+        leto2=str(int(leto)-1)
+        datuma.append(datuma2+" "+leto2)
+    elif mesec=="2":
+        datuma.append("Februar"+" "+leto)
+        datuma.append("Januar"+" "+leto)
+    elif mesec=="3":
+        datuma.append("Marec"+" "+leto)
+        datuma.append("Februar"+" "+leto)
+    elif mesec=="4":
+        datuma.append("April"+" "+leto)
+        datuma.append("Marec"+" "+leto)
+    elif mesec=="5":
+        datuma.append("Maj"+" "+leto)
+        datuma.append("April"+" "+leto)
+    elif mesec=="6":
+        datuma.append("Junij"+" "+leto)
+        datuma.append("Maj"+" "+leto)
+    elif mesec=="7":
+        datuma.append("Julij"+" "+leto)
+        datuma.append("Junij"+" "+leto)
+    elif mesec=="8":
+        datuma.append("Avgust"+" "+leto)
+        datuma.append("Julij"+" "+leto)
+    elif mesec=="9":
+        datuma.append("September"+" "+leto)
+        datuma.append("Avgust"+" "+leto)
+    elif mesec=="10":
+        datuma.append("Oktober"+" "+leto)
+        datuma.append("September"+" "+leto)
+    elif mesec=="11":
+        datuma.append("November"+" "+leto)
+        datuma.append("Oktober"+" "+leto)
+    elif mesec=="12":
+        datuma.append("December"+" "+leto)
+        datuma.append("November"+" "+leto)
+    return datuma
 
 
 def dobi_uporabnika(auto_login = True):
+    #preveri, če je uporabnik vpisan, če ni, ga vrže na prijavno stran
     uporabnik = bottle.request.get_cookie('uporabnik', secret=secret)
     if uporabnik is not None:
         c = baza.cursor()
@@ -100,6 +150,11 @@ def password_md5(s):
     return h.hexdigest()
 
 
+
+
+
+##BOTTLE strani
+
 @bottle.route("/static/<filename:path>")
 def static(filename):
     """Splošna funkcija, ki servira vse statične datoteke iz naslova
@@ -113,22 +168,21 @@ def main():
     # Iz cookieja dobimo uporabnika (ali ga preusmerimo na login, če
     # nima cookija)
     uporabnik=dobi_uporabnika()
-    # Vrnemo predlogo za glavno stran
     return bottle.template("main.html", uporabnik=uporabnik)
 
 
 @bottle.get("/prijava/")
 def prijava():
-    return bottle.template("prijava.html", napaka=None, username=None)
+    return bottle.template("prijava.html", napaka=None, uporabnik=None)
 
 
 @bottle.post("/prijava/")
 def login_post():
-    uporabnik = bottle.request.forms.username
-    password = password_md5(bottle.request.forms.password)
+    uporabnik = bottle.request.forms.uporabnik
+    geslo = password_md5(bottle.request.forms.geslo)
     c = baza.cursor()
     c.execute("SELECT 1 FROM uporabnik WHERE uporabnik=? AND geslo=?",
-              [uporabnik, password])
+              [uporabnik, geslo])
     if c.fetchone() is None:
         # Username in geslo se ne ujemata
         return bottle.template("prijava.html",
@@ -153,92 +207,59 @@ def register():
 @bottle.post("/registracija/")
 def register_post():
     """Registriraj novega uporabnika."""
-    username = bottle.request.forms.username
+    uporabnik = bottle.request.forms.uporabnik
     ime = bottle.request.forms.ime
-    password1 = bottle.request.forms.password1
-    password2 = bottle.request.forms.password2
+    geslo1 = bottle.request.forms.geslo1
+    geslo2 = bottle.request.forms.geslo2
     # Ali uporabnik že obstaja?
     c = baza.cursor()
-    c.execute("SELECT 1 FROM uporabnik WHERE uporabnik=?", [username])
+    c.execute("SELECT 1 FROM uporabnik WHERE uporabnik=?", [uporabnik])
     if c.fetchone():
         # Uporabnik že obstaja
         return bottle.template("registracija.html",
-                               username=username,
+                               uporabnik=uporabnik,
                                ime=ime,
                                napaka='To uporabniško ime je že zavzeto')
-    elif not password1 == password2:
+    elif not geslo1 == geslo2:
         # Geslo se ne ujemata
         return bottle.template("registracija.html",
-                               username=username,
+                               uporabnik=uporabnik,
                                ime=ime,
                                napaka='Gesli se ne ujemata')
     else:
         # Vse je v redu, vstavi novega uporabnika v bazo
-        password = password_md5(password1)
+        geslo = password_md5(password1)
         c.execute("INSERT INTO uporabnik (uporabnik, geslo) VALUES (?, ?)",
-                  (username, password))
+                  (uporabnik, geslo))
         # Daj uporabniku cookie
-        #bottle.response.set_cookie('username', username, path='/', secret=secret)
+        bottle.response.set_cookie('uporabnik', uporabnik, path='/', secret=secret)
         bottle.redirect("/")
 
 
 @bottle.route("/pregled/")
 def pregled():
+    #Izpiše imena in priimke voznikov
     c=baza.cursor()
     c.execute('''SELECT * FROM tovornjak''')
     imen=tuple(c)
     imena={}
     for one in imen:
         imena[one[3]]=one[4]
+
+    #Izpiše zadnja dva meseca
     b=baza.cursor()
     b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC LIMIT 1;''')
     datum=str(tuple(b)[0][0]).split("-")
     leto=datum[0]
-    datum=datum[1]
-    datuma=[]
-    if datum=="1":
-        datuma.append("Januar"+" "+leto)
-        datum2="December"
-        leto2=str(int(leto)-1)
-        datuma.append(datuma2+" "+leto2)
-    elif datum=="2":
-        datuma.append("Februar"+" "+leto)
-        datuma.append("Januar"+" "+leto)
-    elif datum=="3":
-        datuma.append("Marec"+" "+leto)
-        datuma.append("Februar"+" "+leto)
-    elif datum=="4":
-        datuma.append("April"+" "+leto)
-        datuma.append("Marec"+" "+leto)
-    elif datum=="5":
-        datuma.append("Maj"+" "+leto)
-        datuma.append("April"+" "+leto)
-    elif datum=="6":
-        datuma.append("Junij"+" "+leto)
-        datuma.append("Maj"+" "+leto)
-    elif datum=="7":
-        datuma.append("Julij"+" "+leto)
-        datuma.append("Junij"+" "+leto)
-    elif datum=="8":
-        datuma.append("Avgust"+" "+leto)
-        datuma.append("Julij"+" "+leto)
-    elif datum=="9":
-        datuma.append("September"+" "+leto)
-        datuma.append("Avgust"+" "+leto)
-    elif datum=="10":
-        datuma.append("Oktober"+" "+leto)
-        datuma.append("September"+" "+leto)
-    elif datum=="11":
-        datuma.append("November"+" "+leto)
-        datuma.append("Oktober"+" "+leto)
-    elif datum=="12":
-        datuma.append("December"+" "+leto)
-        datuma.append("November"+" "+leto)
-    return bottle.template("pregled.html", imena=imena, datuma=datuma)
+    datuma=mesec_beseda(datum[1], leto)
+    datuma.append(datum[1])
+    datuma.append(str(int(datum[1])-1))
+    return bottle.template("pregled.html", imena=imena, datuma=datuma, leto=leto)
 
 @bottle.route("/pregled/<voznik>/")
 def pregled(voznik):
-    b=baza.cursor()
+    #Izpiše vse prevoze enega voznika
+    b=baza.cursor() #za voznika poišče njegovo registrsko
     b.execute("SELECT registrska FROM tovornjak WHERE ime=?", [voznik])
     b.fetchone()
     registrska=tuple(b)[0][0]
@@ -247,13 +268,16 @@ def pregled(voznik):
     c=tuple(c)
     return bottle.template("voznik.html", voznik=voznik, podatki=c)
 
-@bottle.route("/pregled/<datum>/")
-def pregled(datum):
-    datuma=datum.split(" ")
+@bottle.route("/pregled1/<leto>/<mesec>")
+def pregled(leto, mesec):
+    napaka=None
     c=baza.cursor()
-    c.execute("SELECT * FROM mesecni_stroski WHERE mesec=? AND leto=?", [datuma[0], datuma[1]])
-    c=tuple(c)
-    return bottle.template("datum.html", datum=datum, podatki=c)
+    mesec=mesec_beseda(1, leto)
+    c.execute("SELECT * FROM mesecni_stroski WHERE mesec=? AND leto=?", [mesec, leto])
+    if c.fetchone() is None:
+        napaka="Za ta mesec ni nobenega podatka."
+    else: c=tuple(c)
+    return bottle.template("datum.html", datum=mesec+" "+leto, podatki=c, napaka=napaka)
 
 @bottle.get("/uvoz/")
 def uvoz1():
