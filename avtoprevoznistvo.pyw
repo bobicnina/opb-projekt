@@ -82,47 +82,17 @@ def uvoz_p(exc):
 
 def mesec_beseda(mesec, leto):
     #napiše ime meseca in leto ter še enega pred njim
-    datuma=[]
+    meseci=['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij',
+            'Avgust', 'September', 'November', 'December']
+    meseca=[]
     if mesec=="1":
-        datuma.append("Januar"+" "+leto)
-        datum2="December"
-        leto2=str(int(leto)-1)
-        datuma.append(datuma2+" "+leto2)
-    elif mesec=="2":
-        datuma.append("Februar"+" "+leto)
-        datuma.append("Januar"+" "+leto)
-    elif mesec=="3":
-        datuma.append("Marec"+" "+leto)
-        datuma.append("Februar"+" "+leto)
-    elif mesec=="4":
-        datuma.append("April"+" "+leto)
-        datuma.append("Marec"+" "+leto)
-    elif mesec=="5":
-        datuma.append("Maj"+" "+leto)
-        datuma.append("April"+" "+leto)
-    elif mesec=="6":
-        datuma.append("Junij"+" "+leto)
-        datuma.append("Maj"+" "+leto)
-    elif mesec=="7":
-        datuma.append("Julij"+" "+leto)
-        datuma.append("Junij"+" "+leto)
-    elif mesec=="8":
-        datuma.append("Avgust"+" "+leto)
-        datuma.append("Julij"+" "+leto)
-    elif mesec=="9":
-        datuma.append("September"+" "+leto)
-        datuma.append("Avgust"+" "+leto)
-    elif mesec=="10":
-        datuma.append("Oktober"+" "+leto)
-        datuma.append("September"+" "+leto)
-    elif mesec=="11":
-        datuma.append("November"+" "+leto)
-        datuma.append("Oktober"+" "+leto)
-    elif mesec=="12":
-        datuma.append("December"+" "+leto)
-        datuma.append("November"+" "+leto)
-    return datuma
-
+        leto2=leto-1
+        meseca.append("Januar"+" "+leto)
+        meseca.append("December"+" "+leto2)
+    else:
+        meseca.append(meseci[int(mesec)-1]+" "+leto)
+        meseca.append(meseci[int(mesec)-2]+" "+leto)
+    return meseca
 
 def dobi_uporabnika(auto_login = True):
     #preveri, če je uporabnik vpisan, če ni, ga vrže na prijavno stran
@@ -251,10 +221,10 @@ def pregled():
     b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC LIMIT 1;''')
     datum=str(tuple(b)[0][0]).split("-")
     leto=datum[0]
-    datuma=mesec_beseda(datum[1], leto)
-    datuma.append(datum[1])
-    datuma.append(str(int(datum[1])-1))
-    return bottle.template("pregled.html", imena=imena, datuma=datuma, leto=leto)
+    meseci=mesec_beseda(datum[1], leto)
+    meseci.append(datum[1]) #da se naredi link
+    meseci.append(int(datum[1])-1)
+    return bottle.template("pregled.html", imena=imena, meseci=meseci, leto=leto)
 
 @bottle.route("/pregled/<voznik>/")
 def pregled(voznik):
@@ -268,7 +238,7 @@ def pregled(voznik):
     c=tuple(c)
     return bottle.template("voznik.html", voznik=voznik, podatki=c)
 
-@bottle.route("/pregled1/<leto>/<mesec>")
+@bottle.route("/pregled/<leto>/<mesec>")
 def pregled(leto, mesec):
     napaka=None
     c=baza.cursor()
@@ -277,7 +247,7 @@ def pregled(leto, mesec):
     if c.fetchone() is None:
         napaka="Za ta mesec ni nobenega podatka."
     else: c=tuple(c)
-    return bottle.template("datum.html", datum=mesec+" "+leto, podatki=c, napaka=napaka)
+    return bottle.template("mesec.html", datum=mesec+" "+leto, podatki=c, napaka=napaka)
 
 @bottle.get("/uvoz/")
 def uvoz1():

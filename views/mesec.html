@@ -5,11 +5,11 @@
  <div class="alert alert-warning">{{napaka}}</div>
 %end
 <table id="mesec">
-%for ena in podatki:
+%for niz in podatki:
 <tr>
-%for i in range(len(ena)):
+%for i in range(len(niz)):
 <td>
-{{ena[i]}}
+{{niz[i]}}
 </td>
 %end
 </tr>
