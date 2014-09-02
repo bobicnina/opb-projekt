@@ -171,7 +171,7 @@ def odjava():
 
 @bottle.get("/registracija/")
 def register():
-    return bottle.template("registracija.html", napaka=None, username=None)
+    return bottle.template("registracija.html", napaka=None, uporabnik=None)
 
     
 @bottle.post("/registracija/")
