@@ -24,7 +24,10 @@ def uvoz_p(exc):
     ime=stran.cell_value(0, 9)
     c=baza.cursor()
     c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', [ime])
-    registrska=tuple(c)[0][0]
+    if c.fetchone() is None:
+        napaka="Te registrske številke ni v bazi."
+        return bottle.template("uvoz.html", napaka=napaka)
+    else: registrska=tuple(c)[0][0]
     stran=exc.sheet_by_name('List1')
     i=4
     while i<35:
@@ -218,7 +221,7 @@ def pregled():
 
     #Izpiše zadnja dva meseca
     b=baza.cursor()
-    b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC LIMIT 1;''')
+    b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC''')
     datum=str(tuple(b)[0][0]).split("-")
     leto=datum[0]
     meseci=mesec_beseda(datum[1], leto)
@@ -231,28 +234,29 @@ def pregled(voznik):
     #Izpiše vse prevoze enega voznika
     b=baza.cursor() #za voznika poišče njegovo registrsko
     b.execute("SELECT registrska FROM tovornjak WHERE ime=?", [voznik])
-    b.fetchone()
-    registrska=tuple(b)[0][0]
+    b=b.fetchone()
+    registrska=tuple(b)[0]
     c=baza.cursor()
     c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
     c=tuple(c)
     return bottle.template("voznik.html", voznik=voznik, podatki=c)
 
-@bottle.route("/pregled/<leto>/<mesec>")
-def pregled(leto, mesec):
+@bottle.route("/pregled1/<leto>/<mesec>")
+def pregled1(leto, mesec):
+    print("kja")
     napaka=None
     c=baza.cursor()
-    mesec=mesec_beseda(1, leto)
     c.execute("SELECT * FROM mesecni_stroski WHERE mesec=? AND leto=?", [mesec, leto])
     if c.fetchone() is None:
         napaka="Za ta mesec ni nobenega podatka."
     else: c=tuple(c)
-    return bottle.template("mesec.html", datum=mesec+" "+leto, podatki=c, napaka=napaka)
+    mesec=mesec_beseda(1, leto)
+    return bottle.template("mesec.html", datum=mesec, podatki=c, napaka=napaka)
 
 @bottle.get("/uvoz/")
 def uvoz1():
 #prikaži formo za vnos datoteke
-    return bottle.template("uvoz.html", akcija=None)
+    return bottle.template("uvoz.html")
 
 @bottle.post("/uvoz1/")
 def uvoz():
