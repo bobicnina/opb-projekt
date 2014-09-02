@@ -231,7 +231,10 @@ def pregled():
 
 @bottle.route("/pregled/<voznik>/")
 def pregled(voznik):
-    #Izpiše vse prevoze enega voznika
+    #Izpiše vse prevoze enega voznika in njegove podatk
+    a=baza.cursor()
+    a.execute("SELECT * FROM tovornjak WHERE ime=?", [voznik])
+    a=tuple(a)[0]
     b=baza.cursor() #za voznika poišče njegovo registrsko
     b.execute("SELECT registrska FROM tovornjak WHERE ime=?", [voznik])
     b=b.fetchone()
@@ -239,7 +242,7 @@ def pregled(voznik):
     c=baza.cursor()
     c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
     c=tuple(c)
-    return bottle.template("voznik.html", voznik=voznik, podatki=c)
+    return bottle.template("voznik.html", voznik=voznik, podatkivoznika=a, podatki=c)
 
 @bottle.route("/pregled1/<leto>/<mesec>")
 def pregled1(leto, mesec):

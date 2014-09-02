@@ -2,7 +2,27 @@
 
 <p style="font-size:35px">{{voznik}}</p>
 
+<table>
+<tr><td>Ime in priimek:</td>
+<td>{{podatkivoznika[3]}} {{podatkivoznika[4]}}</td></tr>
+<tr><td>Datum rojstva:</td>
+<td>{{podatkivoznika[2]}}</td></tr>
+<tr><td>Registrska številka:</td>
+<td>{{podatkivoznika[0]}}</td></tr>
+<tr><td>Nosilnost:</td>
+<td>{{podatkivoznika[1]}}</td></tr>
+</table>
+</br></br>
 <table id="voznik">
+<tr>
+<td></td>
+<td>Datum</td>
+<td>Registrska št.</td>
+<td>Teža</td>
+<td>Cena</td>
+<td>Začetek</td>
+<td>Konec</td>
+</tr>
 %for ena in podatki:
 <tr>
 %for i in range(len(ena)):
