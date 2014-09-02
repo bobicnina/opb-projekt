@@ -198,7 +198,7 @@ def register_post():
                                napaka='Gesli se ne ujemata')
     else:
         # Vse je v redu, vstavi novega uporabnika v bazo
-        geslo = password_md5(password1)
+        geslo = password_md5(geslo1)
         c.execute("INSERT INTO uporabnik (uporabnik, geslo) VALUES (?, ?)",
                   (uporabnik, geslo))
         # Daj uporabniku cookie
