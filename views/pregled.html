@@ -7,8 +7,13 @@ Vozniki:
 </ul>
 
 </br></br>
+</br></br>
 Mesec:
+%if len(meseci)==0:
+<div class="alert alert-warning">V bazi ni vnešenega nobenega prevoza.</div>
+%else:
 <ul>
-<li><a href="/pregled/{{leto}}/{{meseci[2]}}/">{{meseci[0]}}</a></li>
-<li><a href="/pregled/{{leto}}/{{meseci[3]}}/">{{meseci[1]}}</a></li>
+%for i in range(2):
+<li><a href="/pregled/{{leto}}/{{meseci[i+2]}}/">{{meseci[i]}}</a></li>
 </ul>
+%end

@@ -1,11 +1,16 @@
 %rebase ('base.html', title='Avtoprevozništvo')
 
+
+ %if napaka:
+  <div class="alert alert-warning">{{napaka}}</div>
+  %end
 <p style="font-size:20px">Naloži excel datoteko:</p>
 <form action="/uvoz/" method="post" enctype="multipart/form-data">
   <input type="file" name="data" /></br>
   <button class="gumb" type="submit">Naloži</button>
 </form>
 </br> </br>
+ 
 <p style="font-size:20px">Vnesi novega voznika:</p>
 <form action="/uvoz1/" method="post" enctype="multipart/form-data">
 <table>

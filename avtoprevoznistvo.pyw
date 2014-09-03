@@ -20,13 +20,14 @@ secret="sara"
 
 def uvoz_p(exc):
     '''Uvozi podatke iz excela v bazo'''
+    napaka=None
     stran=exc.sheet_by_name('List1')
     ime=stran.cell_value(0, 9)
     c=baza.cursor()
     c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', [ime])
     if c.fetchone() is None:
         napaka="Te registrske številke ni v bazi."
-        return bottle.template("uvoz.html", napaka=napaka)
+        return napaka
     else: registrska=tuple(c)[0][0]
     stran=exc.sheet_by_name('List1')
     i=4
@@ -65,7 +66,6 @@ def uvoz_p(exc):
         if c.fetchone() is None:
             baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto1, razdalja1))
         else: pass
-        print(i, mesto1, razdalja1)
 
         getdata2 = {"origins": "skocjan", "destinations": mesto2, "mode": "driving", "language": "en-EN", "sensor": "false"}
         url2="http://maps.googleapis.com/maps/api/distancematrix/json?" + urllib.parse.urlencode(getdata2)
@@ -76,11 +76,12 @@ def uvoz_p(exc):
         if c.fetchone() is None:
             baza.execute("""INSERT INTO mesta(ime, razdalja) VALUES (?, ?)""", (mesto2, razdalja2))
         else: pass
-        print(i, mesto2, razdalja2)
         i+=1
      #VNOS PREVOZA
         c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec, registrska) VALUES (?, ?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2, registrska))
     baza.commit()
+    napaka="Uspešno ste vnesli podatke o mesečnih prevozih."
+    return napaka
 
 
 def mesec_beseda(mesec, leto):
@@ -222,11 +223,15 @@ def pregled():
     #Izpiše zadnja dva meseca
     b=baza.cursor()
     b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC''')
-    datum=str(tuple(b)[0][0]).split("-")
-    leto=datum[0]
-    meseci=mesec_beseda(datum[1], leto)
-    meseci.append(datum[1]) #da se naredi link
-    meseci.append(int(datum[1])-1)
+    if len(tuple(b))==0:
+        meseci=[]
+        leto=[]
+    else:
+        datum=str(tuple(b)[0][0]).split("-")
+        leto=datum[0]
+        meseci=mesec_beseda(datum[1], leto)
+        meseci.append(datum[1]) #da se naredi link
+        meseci.append(int(datum[1])-1)
     return bottle.template("pregled.html", imena=imena, meseci=meseci, leto=leto)
 
 @bottle.route("/pregled/<voznik>/")
@@ -244,9 +249,8 @@ def pregled(voznik):
     c=tuple(c)
     return bottle.template("voznik.html", voznik=voznik, podatkivoznika=a, podatki=c)
 
-@bottle.route("/pregled1/<leto>/<mesec>/")
+@bottle.route("/pregled/<leto>/<mesec>/")
 def pregled1(leto, mesec):
-    print("kja")
     napaka=None
     c=baza.cursor()
     c.execute("SELECT * FROM mesecni_stroski WHERE mesec=? AND leto=?", [mesec, leto])
@@ -257,12 +261,13 @@ def pregled1(leto, mesec):
     return bottle.template("mesec.html", datum=mesec, podatki=c, napaka=napaka)
 
 @bottle.get("/uvoz/")
-def uvoz1():
+def uvoz():
 #prikaži formo za vnos datoteke
-    return bottle.template("uvoz.html")
+    return bottle.template("uvoz.html", napaka=None)
 
 @bottle.post("/uvoz1/")
 def uvoz():
+    napaka=None
     ime=bottle.request.forms.ime
     priimek=bottle.request.forms.priimek
     datum=bottle.request.forms.datum
@@ -273,15 +278,15 @@ def uvoz():
                datum_rojstva, ime, priimek) VALUES (?, ?, ?, ?, ?)''',
               [registrska, nosilnost, datum, ime, priimek])
     baza.commit()
-    bottle.redirect("/")
+    return bottle.template("uvoz.html", napaka="Uspešno ste vnesli novega voznika.")
         
 @bottle.post("/uvoz/")
 #uploada datoteko
 def uvoz():
     data=bottle.request.files.data.file
     exc=open_workbook(file_contents=data.read())
-    uvoz_p(exc)
-    bottle.redirect("/")
+    napaka=uvoz_p(exc)
+    return bottle.template("uvoz.html", napaka=napaka)
 
 
 bottle.run(host='localhost', port=8080)

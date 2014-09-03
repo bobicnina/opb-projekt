@@ -31,6 +31,7 @@ baza.execute('''CREATE TABLE IF NOT EXISTS prevoz (
 baza.execute('''CREATE TABLE IF NOT EXISTS mesecni_stroski (
   registrska TEXT REFERENCES tovornjak(registrska),
   mesec TEXT,
+  leto TEXT,
   gorivo INTEGER,
   popravilo INTEGER,
   razdalja INTEGER,
