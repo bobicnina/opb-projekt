@@ -1,10 +1,12 @@
 %rebase ('base.html', title='Avtoprevozništvo')
 Vozniki:
-<ul>
+<table id="vozniska">
 %for voznik in seznam:
-<li><a href="/pregled/{{voznik[0]}}-{{voznik[1]}}-{{voznik[2]}}/">{{voznik[0]}} {{voznik[1]}} ({{voznik[2]}})</a></li>
+<tr>
+<td id="vozniki">&bull; &nbsp;<a href="/pregled/{{voznik[0]}}-{{voznik[1]}}-{{voznik[2]}}/">{{voznik[0]}} {{voznik[1]}}</a></td><td id="vozniki"><p style="font-size: 10px; margin-left:10px">({{voznik[2]}})</p></td>
+</tr>
 %end
-</ul>
+</table>
 
 </br></br>
 </br></br>

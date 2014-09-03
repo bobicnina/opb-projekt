@@ -39,3 +39,12 @@ table#voznik{
 border-collapse: separate;
 border-spacing: 10px 5px;
 }
+
+table#vozniska{
+padding-top: 0px;
+}
+
+td#vozniki{
+padding-top: 0px;
+padding-bottom: 0px;
+}
