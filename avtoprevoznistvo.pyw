@@ -244,7 +244,7 @@ def pregled(voznik):
     c=tuple(c)
     return bottle.template("voznik.html", voznik=voznik, podatkivoznika=a, podatki=c)
 
-@bottle.route("/pregled1/<leto>/<mesec>")
+@bottle.route("/pregled1/<leto>/<mesec>/")
 def pregled1(leto, mesec):
     print("kja")
     napaka=None
