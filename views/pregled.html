@@ -1,8 +1,8 @@
 %rebase ('base.html', title='Avtoprevozništvo')
 Vozniki:
 <ul>
-%for ime in imena:
-<li><a href="/pregled/{{ime}}/">{{ime}} {{imena[ime]}}</a></li>
+%for voznik in seznam:
+<li><a href="/pregled/{{voznik[0]}}-{{voznik[1]}}-{{voznik[2]}}/">{{voznik[0]}} {{voznik[1]}}</a></li>
 %end
 </ul>
 

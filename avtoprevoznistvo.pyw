@@ -214,11 +214,8 @@ def register_post():
 def pregled():
     #Izpiše imena in priimke voznikov
     c=baza.cursor()
-    c.execute('''SELECT * FROM tovornjak''')
-    imen=tuple(c)
-    imena={}
-    for one in imen:
-        imena[one[3]]=one[4]
+    c.execute('''SELECT ime, priimek, registrska FROM tovornjak''')
+    seznam=tuple(c)
 
     #Izpiše zadnja dva meseca
     b=baza.cursor()
@@ -232,18 +229,18 @@ def pregled():
         meseci=mesec_beseda(datum[1], leto)
         meseci.append(datum[1]) #da se naredi link
         meseci.append(int(datum[1])-1)
-    return bottle.template("pregled.html", imena=imena, meseci=meseci, leto=leto)
+    return bottle.template("pregled.html", seznam=seznam, meseci=meseci, leto=leto)
 
 @bottle.route("/pregled/<voznik>/")
 def pregled(voznik):
     #Izpiše vse prevoze enega voznika in njegove podatk
+    ime=voznik.split("-")[0]
+    priimek=voznik.split("-")[1]
+    registrska=voznik.split("-")[2]
     a=baza.cursor()
-    a.execute("SELECT * FROM tovornjak WHERE ime=?", [voznik])
-    a=tuple(a)[0]
-    b=baza.cursor() #za voznika poišče njegovo registrsko
-    b.execute("SELECT registrska FROM tovornjak WHERE ime=?", [voznik])
-    b=b.fetchone()
-    registrska=tuple(b)[0]
+    a.execute("SELECT * FROM tovornjak WHERE ime=? AND priimek=? AND registrska=?",
+              [ime, priimek, registrska])
+    a=tuple(a)[0] #seznam vseh njegovih podatkov
     c=baza.cursor()
     c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
     c=tuple(c)
