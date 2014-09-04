@@ -231,20 +231,16 @@ def pregled():
         meseci.append(int(datum[1])-1)
     return bottle.template("pregled.html", seznam=seznam, meseci=meseci, leto=leto)
 
-@bottle.route("/pregled/<voznik>/")
-def pregled(voznik):
+@bottle.route("/pregled/<registrska>/")
+def pregled(registrska):
     #Izpiše vse prevoze enega voznika in njegove podatk
-    ime=voznik.split("-")[0]
-    priimek=voznik.split("-")[1]
-    registrska=voznik.split("-")[2]
     a=baza.cursor()
-    a.execute("SELECT * FROM tovornjak WHERE ime=? AND priimek=? AND registrska=?",
-              [ime, priimek, registrska])
+    a.execute("SELECT * FROM tovornjak WHERE registrska=?", [registrska])
     a=tuple(a)[0] #seznam vseh njegovih podatkov
     c=baza.cursor()
     c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
     c=tuple(c)
-    return bottle.template("voznik.html", voznik=voznik, podatkivoznika=a, podatki=c)
+    return bottle.template("voznik.html", podatkivoznika=a, podatki=c)
 
 @bottle.route("/pregled/<leto>/<mesec>/")
 def pregled1(leto, mesec):
