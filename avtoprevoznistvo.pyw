@@ -12,7 +12,7 @@ static_dir = "./Static"
 
 baza_datoteka="prevoznistvo.sqlite3"
 baza = sqlite3.connect(baza_datoteka, isolation_level=None)
-secret="sara"
+secret="123kajf98453jf"
 
 
 
@@ -22,22 +22,24 @@ def uvoz_p(exc):
     '''Uvozi podatke iz excela v bazo'''
     napaka=None
     stran=exc.sheet_by_name('List1')
-    ime=stran.cell_value(0, 9)
+    ime=stran.cell_value(0, 9) #prvi je indeks vrstice, drugi stolpca
     c=baza.cursor()
     c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', [ime])
     if c.fetchone() is None:
         napaka="Te registrske številke ni v bazi."
         return napaka
     else: registrska=tuple(c)[0][0]
-    stran=exc.sheet_by_name('List1')
-    i=4
+    
+    i=4 #v peti vrstici se začnejo datumi prevozov
     while i<35:
         if len(stran.cell_value(i,1))==0:
+            #če je prazen ali ima napisano dopust, ga ne vpiše v bazo
             i+=1
             continue
         if stran.cell_value(i,1)=="DOPUST":
             i+=1
             continue
+        #mesto1 je začetek, mesto2 konec prevoza
         mesto1, mesto2 = stran.cell_value(i,1).split(' - ')
         mesto1.strip()
         mesto2.strip()
@@ -195,7 +197,7 @@ def register_post():
                                ime=ime,
                                napaka='To uporabniško ime je že zavzeto')
     elif not geslo1 == geslo2:
-        # Geslo se ne ujemata
+        # Gesli se ne ujemata
         return bottle.template("registracija.html",
                                uporabnik=uporabnik,
                                ime=ime,
@@ -220,7 +222,7 @@ def pregled():
     #Izpiše zadnja dva meseca
     b=baza.cursor()
     b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC''')
-    if len(tuple(b))==0:
+    if len(tuple(b))==0: #če v bazi ni nobenega prevoza
         meseci=[]
         leto=[]
     else:
@@ -229,11 +231,12 @@ def pregled():
         meseci=mesec_beseda(datum[1], leto)
         meseci.append(datum[1]) #da se naredi link
         meseci.append(int(datum[1])-1)
+        #izgleda tako, npr.: meseci=['Januar 2014', 'Februar 2014', 1, 2]
     return bottle.template("pregled.html", seznam=seznam, meseci=meseci, leto=leto)
 
 @bottle.route("/pregled/<registrska>/")
 def pregled(registrska):
-    #Izpiše vse prevoze enega voznika in njegove podatk
+    #Izpiše vse prevoze enega voznika in njegove podatke
     a=baza.cursor()
     a.execute("SELECT * FROM tovornjak WHERE registrska=?", [registrska])
     a=tuple(a)[0] #seznam vseh njegovih podatkov
@@ -260,6 +263,7 @@ def uvoz():
 
 @bottle.post("/uvoz1/")
 def uvoz():
+#doda novega voznika
     napaka=None
     ime=bottle.request.forms.ime
     priimek=bottle.request.forms.priimek
