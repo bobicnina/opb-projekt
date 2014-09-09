@@ -309,19 +309,11 @@ def sprememba_voznik():
     c.execute("SELECT registrska FROM tovornjak WHERE ime=? AND priimek=? AND datum_rojstva=?", [ime, priimek, datum_rojstva])
     (registrska,)=c.fetchone()
     print(registrska)
+    c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
+    d=tuple(c)
     if ime_new != ime and priimek_new != priimek and datum_rojstva_new != datum_rojstva:
         c.execute("UPDATE tovornjak SET ime=? AND priimek=? AND datum_rojstva=? WHERE registrska=?", [ime_new, priimek_new, datum_rojstva_new, registrska])
-    return bottle.template("sprememba.html")
-
-def sprememba_tovornjak():
-    c.execute("SELECT registrska FROM tovornjak WHERE ime=? AND priimek=? AND datum_rojstva=?", [ime_new, priimek_new, datum_rojstva_new])
-    (registrska,)=fetchone()
-    c.execute("SELECT nosilnost FROM tovornjak WHERE ime=? AND priimek=? AND datum_rojstva=?", [ime_new, priimek_new, datum_rojstva_new])
-    (nosilnost,)=fetchone()
-    if registrska_new != registrska and nosilnost_new != nosilnost:
-        c.execute("UPDATE tovornjak SET registrska=? WHERE ime=? AND priimek=? AND datum_rojstva=?", [registrska_new, ime, priimek, datum_rojstva])
-        c.execute("UPDATE tovornjak SET nosilnost=? WHERE ime=? AND priimek=? AND datum_rojstva=?", [nosilnost_new, ime, priimek, datum_rojstva])
-    return bottle.template("sprememba.html")
+    return bottle.template("voznik.html", podatkivoznika=(registrska_new, nosilnost_new, datum_rojstva_new, ime_new, priimek_new), podatki=d)
         
 bottle.run(host='localhost', port=8080)
 
