@@ -1,6 +1,9 @@
 %rebase ('base.html', title='Avtoprevozništvo')
+%if obvestilo:
+  <div class="alert alert-warning">{{obvestilo}}</div>
+  %end
 
-<p style="font-size:20px">Spremeni voznika:</p>
+<p style="font-size:20px">Spremeni osebne podatke voznika:</p>
 <form action="/sprememba/" method="post" enctype="multipart/form-data">
 <table>
 <tr>
@@ -12,9 +15,22 @@
 </tr><tr>
 <td>Registrska št.:</td> <td>	<input type="text" name="registrska" /> </td>
 </tr><tr>
-<td>Nosilnost:</td> <td> <input type="integer" name="nosilnost" /> </td>
+<td></td><td><button class="gumb" type="submit">Spremeni</button></td>
+</tr>
+</table>
+</form>
+
+<p style="font-size:20px">Spremeni registrsko številko voznika:</p>
+<form action="/sprememba1/" method="post" enctype="multipart/form-data">
+<table>
+<tr>
+<td>Stara registrska številka:</td> <td><input type="text" name="stara"/></td>
 </tr><tr>
-<td></td><td><button class="gumb" type="submit">Vnesi</button></td>
+<td>Nova registrska številka:</td> <td><input type="text" name="nova"/></td>
+</tr><tr>
+<td>Nosilnost:</td> <td><input type="text" name="nova_n"/></td>
+</tr><tr>
+<td></td><td><button class="gumb" type="submit">Spremeni</button></td>
 </tr>
 </table>
 </form>
