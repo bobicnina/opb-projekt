@@ -312,7 +312,7 @@ def sprememba_voznik():
     c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
     d=tuple(c)
     if ime_new != ime or priimek_new != priimek or datum_rojstva_new != datum_rojstva:
-        c.execute("UPDATE tovornjak SET ime=? AND priimek=? AND datum_rojstva=? WHERE registrska=?", [ime_new, priimek_new, datum_rojstva_new, registrska])
+        c.execute("UPDATE tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE registrska=?", [ime_new, priimek_new, datum_rojstva_new, registrska])
         return bottle.template("voznik.html", podatkivoznika=(registrska_new, nosilnost_new, datum_rojstva_new, ime_new, priimek_new), podatki=d)
     else:
         return bottle.template("sprememba.html")
