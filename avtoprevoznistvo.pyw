@@ -291,19 +291,26 @@ def sprememba():
     return bottle.template("sprememba.html")
 
 @bottle.post("/sprememba/")
-def sprememba():
+def sprememba_voznik():
     ime_new = bottle.request.forms.ime
     priimek_new = bottle.request.forms.priimek
     datum_rojstva_new = bottle.request.forms.datum
     registrska_new = bottle.request.forms.registrska
     nosilnost_new = bottle.request.forms.nosilnost
     c=baza.cursor()
+    ime=c.execute("SELECT ime FROM tovornjak WHERE registrska=?", [registrska_new])
+    priimek=c.execute("SELECT priimek FROM tovornjak WHERE registrska=?", [registrska_new])
+    datum_rojstva=c.execute("SELECT datum_rojstva FROM tovornjak WHERE registrska=?", [registrska_new])
+    registrska=c.execute("SELECT registrska FROM tovornjak WHERE ime=?, priimek=?, datum_rojstva=?", [ime, priimek, datum_rojstva])
     if ime_new != ime and priimek_new != priimek and datum_rojstva_new != datum_rojstva:
         c.execute("UPDATE tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE registrska=?", [ime_new, priimek_new, datum_rojstva_new, registrska])
         sporocila.append("Spremenili ste podatke o vozniku.")
+
+def sprememba_tovornjak():
+    registrska=c.execute("SELECT registrska FROM tovornjak WHERE ime=?, priimek=?, datum_rojstva=?", [ime_new, priimek_new, datum_new])
     if registrska_new != registrska and nosilnost_new != nosilnost:
         c.execute("UPDATE tovornjak SET registrska=?, nosilnost=? WHERE ime=?, priimek=?, datum_rojstva=?", [registrska_new, nosilnost_new, ime, priimek, datum_rojstva])
         sporocila.append("Spremenili ste podatke o tovornjaku.")
-
+        
 bottle.run(host='localhost', port=8080)
 
