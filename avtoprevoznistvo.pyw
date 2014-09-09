@@ -291,7 +291,6 @@ def sprememba():
     return bottle.template("sprememba.html")
 
 @bottle.post("/sprememba/")
-@bottle.post("/sprememba/")
 def sprememba_voznik():
     ime_new = bottle.request.forms.ime
     priimek_new = bottle.request.forms.priimek
