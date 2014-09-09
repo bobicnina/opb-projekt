@@ -291,6 +291,7 @@ def sprememba():
     return bottle.template("sprememba.html")
 
 @bottle.post("/sprememba/")
+@bottle.post("/sprememba/")
 def sprememba_voznik():
     ime_new = bottle.request.forms.ime
     priimek_new = bottle.request.forms.priimek
@@ -299,7 +300,6 @@ def sprememba_voznik():
     nosilnost_new = bottle.request.forms.nosilnost
 
     c=baza.cursor()
-
     c.execute("SELECT ime FROM tovornjak WHERE registrska=?", [registrska_new])
     (ime,)=c.fetchone()
     c.execute("SELECT priimek FROM tovornjak WHERE registrska=?", [registrska_new])
@@ -308,15 +308,26 @@ def sprememba_voznik():
     (datum_rojstva,)=c.fetchone()
     c.execute("SELECT registrska FROM tovornjak WHERE ime=? AND priimek=? AND datum_rojstva=?", [ime, priimek, datum_rojstva])
     (registrska,)=c.fetchone()
-    c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
-    d=tuple(c)
-    if registrska_new != registrska:
-        return("Registrske številke ne morete spreminjati.")
-    elif ime_new != ime or priimek_new != priimek or datum_rojstva_new != datum_rojstva:
+
+    c.execute("SELECT registrska FROM tovornjak")
+##    r=c.fetchall()
+##    s = [x[0] for x in r]
+##    print(s)
+##    print(str(registrska_new))
+##    print(type(registrska_new))
+    
+
+    if ime_new != ime or priimek_new != priimek or datum_rojstva_new != datum_rojstva:
+        c.execute("SELECT * FROM prevoz WHERE registrska=?", [registrska])
+        d=tuple(c)
         c.execute("UPDATE tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE registrska=?", [ime_new, priimek_new, datum_rojstva_new, registrska])
         return bottle.template("voznik.html", podatkivoznika=(registrska_new, nosilnost_new, datum_rojstva_new, ime_new, priimek_new), podatki=d)
-    else:
-        return bottle.template("sprememba.html")
+##    elif ime_new == ime or priimek_new == priimek or datum_rojstva_new == datum_rojstva:
+##        try:
+##            registrska_new = registrska_new+'la'
+##        except TypeError:
+##            return "Registrske številke ne morete spreminjati."
+    return bottle.template("sprememba.html")
         
 bottle.run(host='localhost', port=8080)
 
