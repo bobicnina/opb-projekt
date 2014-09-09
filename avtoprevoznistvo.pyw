@@ -300,7 +300,7 @@ def sprememba():
     c=baza.cursor()
     if ime_new != ime and priimek_new != priimek and datum_rojstva_new != datum_rojstva:
         c.execute("UPDATE tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE registrska=?", [ime_new, priimek_new, datum_rojstva_new, registrska])
-        sporocila.append("Spremenili ste podatke o voznik.")
+        sporocila.append("Spremenili ste podatke o vozniku.")
     if registrska_new != registrska and nosilnost_new != nosilnost:
         c.execute("UPDATE tovornjak SET registrska=?, nosilnost=? WHERE ime=?, priimek=?, datum_rojstva=?", [registrska_new, nosilnost_new, ime, priimek, datum_rojstva])
         sporocila.append("Spremenili ste podatke o tovornjaku.")
