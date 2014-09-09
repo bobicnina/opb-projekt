@@ -294,10 +294,10 @@ def sprememba():
 def sprememba():
     if ime_new != ime and priimek_new != priimek and datum_rojstva_new != datum_rojstva:
         c.execute("UPDATE tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE ime=?, priimek=?, datum_rojstva=?", [ime_new, priimek_new, datum_rojstva_new, ime, priimek, datum_rojstva])
-        sporocila.append("Spreminili ste ime voznika.")
+        sporocila.append("Spremenili ste podatke o voznik.")
     if registrska_new != registrska and nosilnost_new != nosilnost:
         c.execute("UPDATE tovornjak SET registrska=?, nosilnost=? WHERE registrska=?, nosilnost=?", [registrska_new, nosilnost_new, registrska, nosilnost])
-        sporocila.append("Spreminili ste priimek voznika.")
+        sporocila.append("Spremenili ste podatke o tovornjaku.")
 
 bottle.run(host='localhost', port=8080)
 
