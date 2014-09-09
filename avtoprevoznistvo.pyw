@@ -286,5 +286,13 @@ def uvoz():
     return bottle.template("uvoz.html", napaka=napaka)
 
 
+@bottle.route("/sprememba/")
+def sprememba():
+    return bottle.template("sprememba.html")
+
+@bottle.post("/sprememba/")
+def sprememba():
+
+
 bottle.run(host='localhost', port=8080)
 
