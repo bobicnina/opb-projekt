@@ -294,7 +294,7 @@ def sprememba():
 def sprememba():
     ime_new = bottle.request.forms.ime
     priimek_new = bottle.request.forms.priimek
-    datum_rojstva_new = bottle.request.forms.datum_rojstva
+    datum_rojstva_new = bottle.request.forms.datum
     registrska_new = bottle.request.forms.registrska
     nosilnost_new = bottle.request.forms.nosilnost
     c=baza.cursor()
