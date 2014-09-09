@@ -8,4 +8,4 @@ Potem je potrebno zagnati "avtoprevoznistvo.pyw", v Pythonu zagnati program in v
 Stran ima dve glavni podstrani: pregled in uvoz podatkov.
 V pregledu si lahko ogledamo vse prevoze posameznega voznika in vse shranjene stroške za vsak mesec posebej.
 V uvozu lahko uvozimo excelovo datoteko, v kateri so shranjeni podatki o prevozih, ali vnesemo novega voznika.
-V podstrani sprememba voznika lahko zamenjamo voznika, če je voznik odpuščen ali ima nov tovornjak.
+V podstrani sprememba voznika lahko zamenjamo voznika, če se voznik upokoji oz. je odpuščen ali ima nov tovornjak.
