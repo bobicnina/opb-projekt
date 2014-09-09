@@ -311,7 +311,6 @@ def sprememba_voznik():
     print(registrska)
     if ime_new != ime and priimek_new != priimek and datum_rojstva_new != datum_rojstva:
         c.execute("UPDATE tovornjak SET ime=? AND priimek=? AND datum_rojstva=? WHERE registrska=?", [ime_new, priimek_new, datum_rojstva_new, registrska])
-        sporocila.append("Spremenili ste podatke o vozniku.")
     return bottle.template("sprememba.html")
 
 def sprememba_tovornjak():
@@ -322,8 +321,6 @@ def sprememba_tovornjak():
     if registrska_new != registrska and nosilnost_new != nosilnost:
         c.execute("UPDATE tovornjak SET registrska=? WHERE ime=? AND priimek=? AND datum_rojstva=?", [registrska_new, ime, priimek, datum_rojstva])
         c.execute("UPDATE tovornjak SET nosilnost=? WHERE ime=? AND priimek=? AND datum_rojstva=?", [nosilnost_new, ime, priimek, datum_rojstva])
-
-        sporocila.append("Spremenili ste podatke o tovornjaku.")
     return bottle.template("sprememba.html")
         
 bottle.run(host='localhost', port=8080)
