@@ -297,11 +297,12 @@ def sprememba():
     datum_rojstva_new = bottle.request.forms.datum_rojstva
     registrska_new = bottle.request.forms.registrska
     nosilnost_new = bottle.request.forms.nosilnost
+    c=baza.cursor()
     if ime_new != ime and priimek_new != priimek and datum_rojstva_new != datum_rojstva:
-        c.execute("UPDATE tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE ime=?, priimek=?, datum_rojstva=?", [ime_new, priimek_new, datum_rojstva_new, ime, priimek, datum_rojstva])
-        sporocila.append("Spremenili ste podatke o vozniku.")
+        c.execute("UPDATE tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE registrska=?", [ime_new, priimek_new, datum_rojstva_new, registrska])
+        sporocila.append("Spremenili ste podatke o voznik.")
     if registrska_new != registrska and nosilnost_new != nosilnost:
-        c.execute("UPDATE tovornjak SET registrska=?, nosilnost=? WHERE registrska=?, nosilnost=?", [registrska_new, nosilnost_new, registrska, nosilnost])
+        c.execute("UPDATE tovornjak SET registrska=?, nosilnost=? WHERE ime=?, priimek=?, datum_rojstva=?", [registrska_new, nosilnost_new, ime, priimek, datum_rojstva])
         sporocila.append("Spremenili ste podatke o tovornjaku.")
 
 bottle.run(host='localhost', port=8080)
