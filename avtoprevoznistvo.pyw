@@ -292,6 +292,11 @@ def sprememba():
 
 @bottle.post("/sprememba/")
 def sprememba():
+    ime_new = bottle.request.forms.ime
+    priimek_new = bottle.request.forms.priimek
+    datum_rojstva_new = bottle.request.forms.datum_rojstva
+    registrska_new = bottle.request.forms.registrska
+    nosilnost_new = bottle.request.forms.nosilnost
     if ime_new != ime and priimek_new != priimek and datum_rojstva_new != datum_rojstva:
         c.execute("UPDATE tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE ime=?, priimek=?, datum_rojstva=?", [ime_new, priimek_new, datum_rojstva_new, ime, priimek, datum_rojstva])
         sporocila.append("Spremenili ste podatke o voznik.")
