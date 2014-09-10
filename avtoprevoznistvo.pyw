@@ -54,7 +54,7 @@ def uvoz_p(exc):
         kilometri=stran.cell_value(46,5)
         datum=xldate_as_tuple(stran.cell_value(i, 2), 0)
         datum=str(datum[0])+"-"+str(datum[1])+"-"+str(datum[2])
-        
+        slovenija=stran.cell_value(i,10)
         c=baza.cursor()
 
     #Na internet pogleda razdaljo od Škocjana do začetka/konca prevoza, če mesta
@@ -81,6 +81,7 @@ def uvoz_p(exc):
         i+=1
      #VNOS PREVOZA
         c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec, registrska) VALUES (?, ?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2, registrska))
+        c.execute("""INSERT INTO cestnina(slovenija) VALUES (?)""", (slovenija))
     baza.commit()
     napaka="Uspešno ste vnesli podatke o mesečnih prevozih."
     return napaka
