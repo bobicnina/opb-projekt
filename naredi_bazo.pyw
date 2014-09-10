@@ -8,15 +8,15 @@ BAZA = "prevoznistvo.sqlite3"
 baza = sqlite3.connect(BAZA)
 
 baza.execute('''CREATE TABLE IF NOT EXISTS tovornjak (
-  registrska TEXT PRIMARY KEY,
+  registrska TEXT PRIMARY KEY  collate nocase,
   nosilnost INTEGER NOT NULL,
   datum_rojstva DATE NOT NULL,
-  ime TEXT NOT NULL,
-  priimek TEXT NOT NULL)''')
+  ime TEXT NOT NULL collate nocase,
+  priimek TEXT NOT NULL collate nocase)''')
 
 baza.execute('''CREATE TABLE IF NOT EXISTS mesta (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  ime TEXT,
+  ime TEXT collate nocase,
   razdalja INTEGER)''')
 
 baza.execute('''CREATE TABLE IF NOT EXISTS prevoz (
