@@ -317,7 +317,7 @@ def sprememba():
         return bottle.template("sprememba.html", obvestilo="Registrske številke "+stara+" ni v bazi.")
 
     c.execute("SELECT * FROM tovornjak WHERE registrska=?", [nova])
-    if c.fetchone() is None:
+    if c.fetchone() is not None:
         return bottle.template("sprememba.html", obvestilo="Registrska številka "+nova+" je že v bazi.")
 
     c.execute("UPDATE  tovornjak SET registrska=?, nosilnost=?  WHERE registrska=?",
