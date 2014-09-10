@@ -7,13 +7,13 @@
 <form action="/sprememba/" method="post" enctype="multipart/form-data">
 <table>
 <tr>
-<td>Ime:</td> <td><input type="text" name="ime" accept-charset="utf-8"/></td>
+<td>Ime:</td> <td><input type="text" name="ime" accept-charset="utf-8" required/></td>
 </tr><tr>
-<td>Priimek:</td> <td><input type="text" name="priimek"  accept-charset="utf-8"/> </td>
+<td>Priimek:</td> <td><input type="text" name="priimek"  accept-charset="utf-8" required/> </td>
 </tr><tr>
-<td>Datum rojstva:</td> <td> <input type="date" name="datum" /> </td>
+<td>Datum rojstva:</td> <td> <input type="date" name="datum" required/> </td>
 </tr><tr>
-<td>Registrska št.:</td> <td>	<input type="text" name="registrska" /> </td>
+<td>Registrska št.:</td> <td>	<input type="text" name="registrska" required/> </td>
 </tr><tr>
 <td></td><td><button class="gumb" type="submit">Spremeni</button></td>
 </tr>
@@ -24,11 +24,11 @@
 <form action="/sprememba1/" method="post" enctype="multipart/form-data">
 <table>
 <tr>
-<td>Stara registrska številka:</td> <td><input type="text" name="stara"/></td>
+<td>Stara registrska številka:</td> <td><input type="text" name="stara" required/></td>
 </tr><tr>
-<td>Nova registrska številka:</td> <td><input type="text" name="nova"/></td>
+<td>Nova registrska številka:</td> <td><input type="text" name="nova" required/></td>
 </tr><tr>
-<td>Nosilnost:</td> <td><input type="text" name="nova_n"/></td>
+<td>Nosilnost:</td> <td><input type="text" name="nova_n" required/></td>
 </tr><tr>
 <td></td><td><button class="gumb" type="submit">Spremeni</button></td>
 </tr>

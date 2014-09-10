@@ -288,7 +288,7 @@ def uvoz():
 
 @bottle.route("/sprememba/")
 def sprememba():
-    return bottle.template("sprememba.html")
+    return bottle.template("sprememba.html", obvestilo=None)
 
 @bottle.post("/sprememba/")
 def sprememba_voznik():
@@ -298,6 +298,9 @@ def sprememba_voznik():
     registrska = bottle.request.forms.registrska
     nosilnost_new = bottle.request.forms.nosilnost  
     c=baza.cursor()
+    c.execute("SELECT * FROM tovornjak WHERE registrska=?", [registrska])
+    if c.fetchone() is None:
+        return bottle.template("sprememba.html", obvestilo="Te registrske številke ni v bazi.")
     c.execute("UPDATE  tovornjak SET ime=?, priimek=?, datum_rojstva=? WHERE registrska=?",
               [ime_new, priimek_new, datum_rojstva_new, registrska])
     return bottle.template("sprememba.html", obvestilo="Uspešno ste spremenili podatke o vozniku.")
@@ -308,6 +311,15 @@ def sprememba():
     nova=bottle.request.forms.nova
     nova_n=bottle.request.forms.nova_n
     c=baza.cursor()
+    
+    c.execute("SELECT * FROM tovornjak WHERE registrska=?", [stara])
+    if c.fetchone() is None:
+        return bottle.template("sprememba.html", obvestilo="Registrske številke "+stara+" ni v bazi.")
+
+    c.execute("SELECT * FROM tovornjak WHERE registrska=?", [nova])
+    if c.fetchone() is None:
+        return bottle.template("sprememba.html", obvestilo="Registrska številka "+nova+" je že v bazi.")
+
     c.execute("UPDATE  tovornjak SET registrska=?, nosilnost=?  WHERE registrska=?",
               [nova, nova_n, stara])
     return bottle.template("sprememba.html", obvestilo="Uspešno ste spremenili registrsko številko.")
