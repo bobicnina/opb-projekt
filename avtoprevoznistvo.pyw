@@ -282,9 +282,9 @@ def pregled1(leto, mesec):
     datum=str(leto)+'-'+str(mesec)
     c=baza.cursor()
     c.execute("SELECT registrska, gorivo, razdalja FROM mesecni_stroski WHERE mesec=?", [datum])
-    if c.fetchone() is None:
-        napaka="Za ta mesec ni nobenega podatka."
     m=tuple(c)
+    if len(m)==0:
+        napaka="Za ta mesec ni nobenega podatka." 
     mesec=en_mesec(mesec, leto)
     print(m)
     return bottle.template("mesec.html", datum=mesec, podatki=m, napaka=napaka)
@@ -329,7 +329,6 @@ def sprememba_voznik():
     priimek_new = bottle.request.forms.priimek
     datum_rojstva_new = bottle.request.forms.datum
     registrska = bottle.request.forms.registrska
-    nosilnost_new = bottle.request.forms.nosilnost  
     c=baza.cursor()
     c.execute("SELECT * FROM tovornjak WHERE registrska=?", [registrska])
     if c.fetchone() is None:
