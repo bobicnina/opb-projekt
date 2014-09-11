@@ -25,10 +25,11 @@ def uvoz_p(exc):
     ime=stran.cell_value(0, 9) #prvi je indeks vrstice, drugi stolpca
     c=baza.cursor()
     c.execute('''SELECT registrska FROM tovornjak WHERE ime=?''', [ime])
-    if c.fetchone() is None:
+    a=tuple(c)
+    if len(a)==0:
         napaka="Te registrske številke ni v bazi."
         return napaka
-    else: registrska=tuple(c)[0][0]
+    else: registrska=a[0][0]
     
     i=4 #v peti vrstici se začnejo datumi prevozov
     while i<35:
@@ -81,7 +82,7 @@ def uvoz_p(exc):
         i+=1
      #VNOS PREVOZA
         c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec, registrska) VALUES (?, ?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2, registrska))
-        c.execute("""INSERT INTO cestnina(slovenija) VALUES (?)""", (slovenija))
+        #c.execute("""INSERT INTO cestnina(slovenija) VALUES (?)""", [slovenija])
     baza.commit()
     napaka="Uspešno ste vnesli podatke o mesečnih prevozih."
     return napaka
@@ -100,6 +101,11 @@ def mesec_beseda(mesec, leto):
         meseca.append(meseci[int(mesec)-1]+" "+leto)
         meseca.append(meseci[int(mesec)-2]+" "+leto)
     return meseca
+
+def en_mesec(mesec, leto):
+    meseci=['Januar', 'Februar', 'Marec', 'April', 'Maj', 'Junij', 'Julij',
+            'Avgust', 'September', 'November', 'December']
+    return meseci[int(mesec)-1]+' '+leto
 
 def dobi_uporabnika(auto_login = True):
     #preveri, če je uporabnik vpisan, če ni, ga vrže na prijavno stran
@@ -222,12 +228,13 @@ def pregled():
 
     #Izpiše zadnja dva meseca
     b=baza.cursor()
-    b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC''')
-    if len(tuple(b))==0: #če v bazi ni nobenega prevoza
+    b.execute('''SELECT datum FROM prevoz ORDER BY datum DESC LIMIT 1''')
+    b=tuple(b)
+    if len(b)==0: #če v bazi ni nobenega prevoza
         meseci=[]
         leto=[]
     else:
-        datum=str(tuple(b)[0][0]).split("-")
+        datum=b[0][0].split("-")
         leto=datum[0]
         meseci=mesec_beseda(datum[1], leto)
         meseci.append(datum[1]) #da se naredi link
@@ -254,7 +261,7 @@ def pregled1(leto, mesec):
     if c.fetchone() is None:
         napaka="Za ta mesec ni nobenega podatka."
     else: c=tuple(c)
-    mesec=mesec_beseda(1, leto)
+    mesec=en_mesec(mesec, leto)
     return bottle.template("mesec.html", datum=mesec, podatki=c, napaka=napaka)
 
 @bottle.get("/uvoz/")
