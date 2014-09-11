@@ -3,7 +3,7 @@
 <p style="font-size:35px">{{datum}}</p>
 %if napaka:
  <div class="alert alert-warning">{{napaka}}</div>
-%end
+%else:
 <div id="mesec">
 <table id="mesec">
 <tr>
@@ -23,3 +23,4 @@
 
 </table>
 </div>
+%end
