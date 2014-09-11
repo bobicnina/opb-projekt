@@ -283,7 +283,6 @@ def pregled1(leto, mesec):
     c=baza.cursor()
     c.execute("SELECT registrska, gorivo, razdalja FROM mesecni_stroski WHERE mesec=?", [datum])
     m=tuple(c)
-    print(m)
     if len(m)==0:
         napaka="Za ta mesec ni nobenega podatka." 
     mesec=en_mesec(mesec, leto)
