@@ -4,7 +4,13 @@
 %if napaka:
  <div class="alert alert-warning">{{napaka}}</div>
 %end
+<div id="mesec">
 <table id="mesec">
+<tr>
+<td width="140px">registrska</td>
+<td width="140px">gorivo</td>
+<td>razdalja</td>
+</tr>
 %for niz in podatki:
 <tr>
 %for i in range(len(niz)):
@@ -16,3 +22,4 @@
 %end
 
 </table>
+</div>

@@ -281,8 +281,7 @@ def pregled1(leto, mesec):
     napaka=None
     datum=str(leto)+'-'+str(mesec)
     c=baza.cursor()
-    print(datum)
-    c.execute("SELECT * FROM mesecni_stroski WHERE mesec=?", [datum])
+    c.execute("SELECT registrska, gorivo, razdalja FROM mesecni_stroski WHERE mesec=?", [datum])
     if c.fetchone() is None:
         napaka="Za ta mesec ni nobenega podatka."
     m=tuple(c)
