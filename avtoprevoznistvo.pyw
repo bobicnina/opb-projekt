@@ -31,6 +31,16 @@ def uvoz_p(exc):
         return napaka
     else: registrska=a[0][0]
     
+    #pregleda, če so te prevozi že vnešeni v bazo
+    prvi_datum=xldate_as_tuple(stran.cell_value(4, 2), 0)
+    datum=str(prvi_datum[0])+"-"+str(prvi_datum[1])+"-"+str(prvi_datum[2])
+    c.execute("SELECT * FROM prevoz WHERE datum=? AND registrska=?",
+                  [datum, registrska])
+    if c.fetchone() is not None:
+        napaka="Prevozi so že vnešeni v bazo."
+        return napaka
+
+    
     i=4 #v peti vrstici se začnejo datumi prevozov
     while i<35:
         if len(stran.cell_value(i,1))==0:
@@ -52,12 +62,10 @@ def uvoz_p(exc):
     #Ostali podatki o prevozu
         kolicina=stran.cell_value(i, 7)
         cena=stran.cell_value(i, 6)
-        kilometri=stran.cell_value(46,5)
         datum=xldate_as_tuple(stran.cell_value(i, 2), 0)
         datum=str(datum[0])+"-"+str(datum[1])+"-"+str(datum[2])
-        slovenija=stran.cell_value(i,10)
-        c=baza.cursor()
-
+    
+        
     #Na internet pogleda razdaljo od Škocjana do začetka/konca prevoza, če mesta
     #še ni v bazi, ga vpiše
         getdata = {"origins": "skocjan", "destinations": mesto1, "mode": "driving", "language": "en-EN", "sensor": "false"}
@@ -82,7 +90,22 @@ def uvoz_p(exc):
         i+=1
      #VNOS PREVOZA
         c.execute("""INSERT INTO prevoz(datum, kolicina, cena_tone, zacetek, konec, registrska) VALUES (?, ?, ?, ?, ?, ?)""", (datum, kolicina, cena, mesto1, mesto2, registrska))
-        #c.execute("""INSERT INTO cestnina(slovenija) VALUES (?)""", [slovenija])
+
+    #LETO-MESEC
+    mesec=str(prvi_datum[0])+'-'+str(prvi_datum[1])   #ven da leto-mesec v številkah
+
+    #CESTNINA
+    slovenija=stran.cell_value(53, 2)
+    hrvaska=stran.cell_value(54, 2)
+    c.execute("""INSERT INTO cestnina(registrska, mesec, slovenija, hrvaska)
+                  VALUES (?, ?, ?, ?)""", [registrska, mesec, slovenija, hrvaska])
+
+    #MESEČNI STROŠKI
+    gorivo=stran.cell_value(45, 6)
+    kilometri=stran.cell_value(46,5)
+    c.execute("""INSERT INTO mesecni_stroski(registrska, mesec, gorivo, razdalja) VALUES (?, ?, ?, ?)""",
+              [registrska, mesec, gorivo, kilometri])
+
     baza.commit()
     napaka="Uspešno ste vnesli podatke o mesečnih prevozih."
     return napaka

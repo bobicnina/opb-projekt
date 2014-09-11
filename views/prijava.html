@@ -16,6 +16,7 @@
 	<div id="banner">
 	<center><a href="\" style="text-decoration:none;"><img alt="" height="176" src="../static/logo.jpg" width="469"></a></center></br>
 	</div>
+	<center>
 	Prosimo, prijavite se.
 	 <div class="container">
       <form class="form-signin" role="form" method="post" action=".">
@@ -26,13 +27,14 @@
 		%if uporabnik:
         value="{{uporabnik}}"
         %end
-		name="uporabnik" required autofocus>
-        <input type="password" class="form-control" placeholder="Geslo" name="geslo" required>
+		name="uporabnik" required autofocus></br>
+        <input type="password" class="form-control" placeholder="Geslo" name="geslo" required></br>
         <button class="gumb" type="submit">Prijava</button>
       </form>
     </div> 
 	</br></br>
-	Če še nimate uporabniškega imena in gesla, ter se želite registrirati, kliknite <a href="/registracija/">tukaj</a>.
+	<a href="/registracija/">Registracija</a>
+	</center>
 
 </div>
   </body>
