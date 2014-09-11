@@ -279,13 +279,16 @@ def pregled(registrska):
 @bottle.route("/pregled/<leto>/<mesec>/")
 def pregled1(leto, mesec):
     napaka=None
+    datum=str(leto)+'-'+str(mesec)
     c=baza.cursor()
-    c.execute("SELECT * FROM mesecni_stroski WHERE mesec=? AND leto=?", [mesec, leto])
+    print(datum)
+    c.execute("SELECT * FROM mesecni_stroski WHERE mesec=?", [datum])
     if c.fetchone() is None:
         napaka="Za ta mesec ni nobenega podatka."
-    else: c=tuple(c)
+    m=tuple(c)
     mesec=en_mesec(mesec, leto)
-    return bottle.template("mesec.html", datum=mesec, podatki=c, napaka=napaka)
+    print(m)
+    return bottle.template("mesec.html", datum=mesec, podatki=m, napaka=napaka)
 
 @bottle.get("/uvoz/")
 def uvoz():
