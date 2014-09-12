@@ -285,8 +285,16 @@ def pregled1(leto, mesec):
     m=tuple(c)
     if len(m)==0:
         napaka="Za ta mesec ni nobenega podatka." 
-    mesec=en_mesec(mesec, leto)
-    return bottle.template("mesec.html", datum=mesec, podatki=m, napaka=napaka)
+    mesec=en_mesec(mesec, leto) 
+    podatki=[]
+    for seznam in m:
+        registrska=seznam[0]
+        c.execute("SELECT ime, priimek FROM tovornjak WHERE registrska=?", [registrska])
+        ime=tuple(c)
+        voznik=[]
+        voznik.extend((ime[0][0], ime[0][1], seznam[0], seznam[1], seznam[2]))
+        podatki.append(voznik)
+    return bottle.template("mesec.html", datum=mesec, podatki=podatki, napaka=napaka)
 
 @bottle.get("/uvoz/")
 def uvoz():
